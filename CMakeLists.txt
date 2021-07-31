@@ -3,7 +3,7 @@ project(araneae_reasoner)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(araneae_reasoner main.cpp)
+add_executable(araneae_reasoner main.cpp memory/Atom.h memory/Term.h memory/Memory.h)
 
 # Import library target 'caf'
 find_package(CAF COMPONENTS core io REQUIRED)
