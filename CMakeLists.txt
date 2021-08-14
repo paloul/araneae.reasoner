@@ -3,7 +3,10 @@ project(araneae_reasoner)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(araneae_reasoner main.cpp memory/Atom.h memory/Term.h memory/Memory.h)
+file(GLOB MEMORY_SRC CONFIGURE_DEPENDS "memory/*.h" "memory/*.cpp")
+file(GLOB UTILS_PARALLELHASHMAP_SRC CONFIGURE_DEPENDS "utils/parallel_hashmap/*.h" "utils/parallel_hashmap/*.cpp")
+
+add_executable(araneae_reasoner main.cpp ${MEMORY_SRC} ${UTILS_PARALLELHASHMAP_SRC})
 
 # Import library target 'caf'
 find_package(CAF COMPONENTS core io REQUIRED)
