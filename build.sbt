@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker._
+
 name := "araneae.reasoner"
 
 organization := "paloul"
@@ -52,3 +54,19 @@ libraryDependencies ++= {
 
   )
 }
+
+// Enable the Docker Plugin and define settings
+enablePlugins(DockerPlugin)
+Docker / packageName := name.value
+Docker / version := version.value
+Docker / dockerBaseImage := "openjdk:11-jre-slim-bullseye"
+Docker / dockerExposedPorts := Seq(5000, 2550, 8558)
+
+// Add custom Docker Cmds to the Dockerfile
+dockerCommands ++= Seq(
+  Cmd("USER", "root"),
+  ExecCmd("RUN", "apt-get", "update"),
+  ExecCmd("RUN", "apt-get", "upgrade", "-y"),
+  ExecCmd("RUN", "apt-get", "dist-upgrade", "-y"),
+  Cmd("USER", (Docker / daemonUser).value)
+)
