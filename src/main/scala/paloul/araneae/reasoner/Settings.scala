@@ -1,5 +1,6 @@
 package paloul.araneae.reasoner
 
+import akka.actor._
 import com.typesafe.config.Config
 
 /**
@@ -34,12 +35,9 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
  */
 class Settings(config: Config) extends Extension {
 
-  import scala.jdk.CollectionConverters._
   import scala.concurrent.duration._
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
-
-  val currentWorkingDirectory: String = System.getProperty("user.dir")
 
   val p = getClass.getPackage()
 
