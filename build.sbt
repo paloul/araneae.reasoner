@@ -23,6 +23,11 @@ scalacOptions ++= Seq(
   "-language:postfixOps"
 )
 
+// Enable Akka Grpc Plugin
+// Check in plugins.sbt for Akka Grpc version
+// https://doc.akka.io/docs/akka-grpc/current/server/walkthrough.html
+enablePlugins(AkkaGrpcPlugin)
+
 libraryDependencies ++= {
   val AkkaVersion = "2.6.16"
   val AkkaHttpVersion = "10.2.6"
@@ -64,9 +69,9 @@ Docker / dockerExposedPorts := Seq(5000, 2550, 8558)
 
 // Add custom Docker Cmds to the Dockerfile
 dockerCommands ++= Seq(
-  Cmd("USER", "root"),
+  Cmd("USER", "root"), // Switch to root to allow apt-get upgrade command
   ExecCmd("RUN", "apt-get", "update"),
   ExecCmd("RUN", "apt-get", "upgrade", "-y"),
   ExecCmd("RUN", "apt-get", "dist-upgrade", "-y"),
-  Cmd("USER", (Docker / daemonUser).value)
+  Cmd("USER", (Docker / daemonUser).value) // Switch back to default user from root
 )
