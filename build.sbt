@@ -49,7 +49,7 @@ libraryDependencies ++= {
 
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
-    "ch.qos.logback"                % "logback-classic"                     % "1.2.5",
+    "ch.qos.logback"                % "logback-classic"                     % "1.2.6",
     "net.logstash.logback"          % "logstash-logback-encoder"            % "6.6"
 
   )
