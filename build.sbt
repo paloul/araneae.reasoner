@@ -23,14 +23,9 @@ scalacOptions ++= Seq(
   "-language:postfixOps"
 )
 
-// Enable Akka Grpc Plugin
-// Check in plugins.sbt for Akka Grpc version
-// https://doc.akka.io/docs/akka-grpc/current/server/walkthrough.html
-enablePlugins(AkkaGrpcPlugin)
-
 libraryDependencies ++= {
-  val AkkaVersion = "2.6.16"
-  val AkkaHttpVersion = "10.2.6"
+  val AkkaVersion = "2.6.17"
+  val AkkaHttpVersion = "10.2.7"
   val AkkaManagementVersion = "1.1.1"
 
   Seq(
