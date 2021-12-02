@@ -10,6 +10,8 @@ exportJars := true
 
 Global / cancelable := false
 
+Global / excludeLintKeys += lintUnused
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 scalacOptions ++= Seq(
@@ -31,6 +33,7 @@ libraryDependencies ++= {
   val JacksonVersion = "2.13.0"
 
   Seq(
+    "com.typesafe.akka"             %% "akka-actor"                   % AkkaVersion,
     "com.typesafe.akka"             %% "akka-actor-typed"             % AkkaVersion,
 
     "com.typesafe.akka"             %% "akka-serialization-jackson"   % AkkaVersion,
@@ -38,6 +41,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"             %% "akka-cluster-typed"           % AkkaVersion,
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed"  % AkkaVersion,
 
+    "com.typesafe.akka"             %% "akka-persistence"             % AkkaVersion,
     "com.typesafe.akka"             %% "akka-persistence-typed"       % AkkaVersion,
     "com.typesafe.akka"             %% "akka-persistence-query"       % AkkaVersion,
     "com.typesafe.akka"             %% "akka-persistence-cassandra"   % AkkaPersistenceCassandra,
@@ -57,7 +61,7 @@ libraryDependencies ++= {
 
     // Alpakka libraries
     // https://doc.akka.io/docs/alpakka/current/cassandra.html
-    "com.lightbend.akka"            %% "akka-stream-alpakka-cassandra"      % "3.0.3",
+    "com.lightbend.akka"            %% "akka-stream-alpakka-cassandra"      % "3.0.4",
     // https://doc.akka.io/docs/alpakka-kafka/current/home.html
     "com.typesafe.akka"             %% "akka-stream-kafka"                  % "2.1.1",
     // Jackson databind required for Kafka Connector
