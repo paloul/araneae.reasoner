@@ -39,26 +39,26 @@ class Settings(config: Config) extends Extension {
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
 
-  val p = getClass.getPackage()
+  private val p = getClass.getPackage
 
   object application {
-    val name: String = p.getImplementationTitle()
-    val version: String = p.getImplementationVersion()
-  }
+    val name: String = p.getImplementationTitle
+    val version: String = p.getImplementationVersion
 
-  // Holds config params from application.conf concerning the Cluster App settings
-  object cluster {
-    val name: String = config.getString("application.cluster.name")
-    val port: Int = config.getInt("application.cluster.port")
-    val timeout: Duration = Duration(config.getString("application.cluster.timeout"))
-    val deployCloud: Boolean = config.getBoolean("application.cluster.deploy-cloud")
-    val maxNumNodes: Int = config.getInt("application.cluster.max-num-nodes")
-  }
+    // Holds config params from application.conf concerning the Cluster App settings
+    object cluster {
+      val name: String = config.getString("application.cluster.name")
+      val port: Int = config.getInt("application.cluster.port")
+      val timeout: Duration = Duration(config.getString("application.cluster.timeout"))
+      val deployCloud: Boolean = config.getBoolean("application.cluster.deploy-cloud")
+      val maxNumNodes: Int = config.getInt("application.cluster.max-num-nodes")
+    }
 
-  // Holds config params from application.conf concerning the HTTP API settings
-  object http {
-    val host: String = config.getString("application.http.host")
-    val port: Int = config.getInt("application.http.port")
+    // Holds config params from application.conf concerning the HTTP API settings
+    object http {
+      val host: String = config.getString("application.http.host")
+      val port: Int = config.getInt("application.http.port")
+    }
   }
 
   // ******************************************************************************
