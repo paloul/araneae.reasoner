@@ -37,8 +37,8 @@ trait RestServicesSupport {
     val combinedRoutes: Route = Route.seal(coreApiRoutes ~ externalRoutes)
     /* NOTE: APPEND ANY NEW ROUTES ABOVE TO ROUTES WITH THE ~ SYMBOL */
 
-    val host = settings.http.host // Host address to bind to
-    val port = settings.http.port // Port address to bind to
+    val host = settings.application.http.host // Host address to bind to
+    val port = settings.application.http.port // Port address to bind to
 
     // Bind to the server details given by host, port, and routes
     // If failure then terminate the whole system
@@ -51,7 +51,7 @@ trait RestServicesSupport {
         shutdown.addTask(CoordinatedShutdown.PhaseServiceRequestsDone, "http-graceful-terminate") { () =>
           serverBinding.terminate(5.seconds).map { _ =>
             log.info("{} http://{}:{}/ graceful shutdown completed",
-              settings.cluster.name, address.getHostString, address.getPort)
+              settings.application.cluster.name, address.getHostString, address.getPort)
             Done
           }(ExecutionContext.global)
         }
