@@ -45,20 +45,15 @@ class Settings(config: Config) extends Extension {
     val name: String = p.getImplementationTitle
     val version: String = p.getImplementationVersion
 
-    // Holds config params from application.conf concerning the Cluster App settings
-    object cluster {
-      val name: String = config.getString("application.cluster.name")
-      val port: Int = config.getInt("application.cluster.port")
-      val timeout: Duration = Duration(config.getString("application.cluster.timeout"))
-      val deployCloud: Boolean = config.getBoolean("application.cluster.deploy-cloud")
-      val maxNumNodes: Int = config.getInt("application.cluster.max-num-nodes")
-    }
-
-    // Holds config params from application.conf concerning the HTTP API settings
-    object http {
-      val host: String = config.getString("application.http.host")
-      val port: Int = config.getInt("application.http.port")
-    }
+    // Holds config params from application.conf concerning the Araneae App settings
+    val akkaRemotingPort: Int = config.getInt("application.akka-remoting-port")
+    val akkaTimeout: Duration = Duration(config.getString("application.akka-timeout"))
+    val akkaMaxNumNodes: Int = config.getInt("application.akka-max-num-nodes")
+    val akkaSeedHost: String = config.getString("application.akka-seed-host")
+    val akkaSeedPort: Int = config.getInt("application.akka-seed-port")
+    val akkaHttpHost: String = config.getString("application.akka-http-host")
+    val akkaHttpPort: Int = config.getInt("application.akka-http-port")
+    val cloudDeploy: Boolean = config.getBoolean("application.cloud-deploy")
   }
 
   // ******************************************************************************
