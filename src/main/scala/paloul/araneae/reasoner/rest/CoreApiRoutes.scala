@@ -51,6 +51,8 @@ class CoreApiRoutes(settings: Settings) (implicit system: ActorSystem[_]) extend
         pathEndOrSingleSlash {
           log.debug("GET [version]")
 
+          // TODO: Create response data model for version. Reply with version info.
+
           complete(OK)
         }
       }
