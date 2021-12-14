@@ -46,6 +46,7 @@ class Settings(config: Config) extends Extension {
     val version: String = p.getImplementationVersion
 
     // Holds config params from application.conf concerning the Araneae App settings
+    val akkaClusterName: String = config.getString("application.akka-cluster-name")
     val akkaRemotingPort: Int = config.getInt("application.akka-remoting-port")
     val akkaTimeout: Duration = Duration(config.getString("application.akka-timeout"))
     val akkaMaxNumNodes: Int = config.getInt("application.akka-max-num-nodes")
