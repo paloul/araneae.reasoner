@@ -31,7 +31,7 @@ class CoreApiRoutes(settings: Settings) (implicit system: ActorSystem[_]) extend
    */
   private def isAlive = {
     get {
-      pathPrefix("api" / "is_alive") {
+      pathPrefix("core" / "api" / "is_alive") {
         pathEndOrSingleSlash {
           log.debug("GET [is_alive]")
 
@@ -47,7 +47,7 @@ class CoreApiRoutes(settings: Settings) (implicit system: ActorSystem[_]) extend
    */
   private def getVersion = {
     get {
-      pathPrefix("api" / "version") {
+      pathPrefix("core" / "api" / "version") {
         pathEndOrSingleSlash {
           log.debug("GET [version]")
 
