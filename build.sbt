@@ -25,6 +25,8 @@ scalacOptions ++= Seq(
   "-language:postfixOps"
 )
 
+enablePlugins(AkkaGrpcPlugin)
+
 libraryDependencies ++= {
   val AkkaVersion = "2.6.17"
   val AkkaHttpVersion = "10.2.7"
@@ -71,7 +73,7 @@ libraryDependencies ++= {
 
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
-    "ch.qos.logback"                % "logback-classic"                         % "1.2.7",
+    "ch.qos.logback"                % "logback-classic"                         % "1.2.8",
     "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1"
 
   )
