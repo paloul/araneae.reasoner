@@ -4,3 +4,8 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "paloul.araneae.reasoner.serialization";
 option java_outer_classname = "AgentEventProto";
+
+message AgentDataProto {
+  string agent_id = 1;
+  int32 health = 2;
+}
