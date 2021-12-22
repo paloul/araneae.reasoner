@@ -31,9 +31,10 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
  * Settings class to help parse application.conf and make values available
  * during runtime of application. If you want something from app.conf
  * available in application then add objects and parsing logic here
+ *
  * @param config The reference to config parameters i.e. the application.conf
  */
-class Settings(config: Config) extends Extension {
+class Settings(val config: Config) extends Extension {
 
   import scala.concurrent.duration._
 
@@ -49,7 +50,6 @@ class Settings(config: Config) extends Extension {
     val akkaClusterName: String = config.getString("application.akka-cluster-name")
     val akkaRemotingPort: Int = config.getInt("application.akka-remoting-port")
     val akkaTimeout: Duration = Duration(config.getString("application.akka-timeout"))
-    val akkaMaxNumNodes: Int = config.getInt("application.akka-max-num-nodes")
     val akkaSeedHost: String = config.getString("application.akka-seed-host")
     val akkaSeedPort: Int = config.getInt("application.akka-seed-port")
     val akkaHttpHost: String = config.getString("application.akka-http-host")
