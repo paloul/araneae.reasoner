@@ -1,0 +1,1 @@
+ThisBuild / version := sys.props.getOrElse("VERSION", "0.0.1")
