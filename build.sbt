@@ -28,13 +28,13 @@ scalacOptions ++= Seq(
 enablePlugins(AkkaGrpcPlugin)
 
 libraryDependencies ++= {
-  val AkkaVersion = "2.6.17"
+  val AkkaVersion = "2.6.18"
   val AkkaHttpVersion = "10.2.7"
   val AkkaStreamKafkaVersion = "2.1.1" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
   val AkkaManagementVersion = "1.1.1"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.0"
+  val JacksonVersionVersion = "2.13.1"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -73,7 +73,7 @@ libraryDependencies ++= {
 
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
-    "ch.qos.logback"                % "logback-classic"                         % "1.2.8",
+    "ch.qos.logback"                % "logback-classic"                         % "1.2.10",
     "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1"
 
   )
