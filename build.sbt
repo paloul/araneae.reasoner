@@ -1,6 +1,6 @@
 import com.typesafe.sbt.packager.docker._
 
-name := "araneae.reasoner"
+name := "araneae.cluster"
 
 organization := "paloul"
 

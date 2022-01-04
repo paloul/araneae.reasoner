@@ -1,13 +1,8 @@
-package paloul.araneae.reasoner
+package paloul.araneae.cluster
 
 import akka.actor.typed.ActorSystem
-import akka.http.scaladsl.Http
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
-import com.typesafe.config.ConfigFactory
-import paloul.araneae.reasoner.rest.RestServicesSupport
-
-import scala.concurrent.Future
 
 object Main extends MainServicesSupport with MainSettingsSupport {
 

@@ -1,4 +1,4 @@
-package paloul.araneae.reasoner.rest.models
+package paloul.araneae.cluster.rest.models
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}

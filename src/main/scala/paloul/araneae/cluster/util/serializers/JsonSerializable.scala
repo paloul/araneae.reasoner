@@ -1,4 +1,4 @@
-package paloul.araneae.reasoner.util.serializers
+package paloul.araneae.cluster.util.serializers
 
 /**
  * Marker trait for serialization with Jackson JSON.

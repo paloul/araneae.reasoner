@@ -1,4 +1,4 @@
-package paloul.araneae.reasoner
+package paloul.araneae.cluster
 
 import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}

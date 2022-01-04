@@ -1,9 +1,9 @@
-package paloul.araneae.reasoner.rest.util
+package paloul.araneae.cluster.rest.util
 
 import org.slf4j.Logger
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives.{complete, extractUri}
-import paloul.araneae.reasoner.rest.models.Error._
+import paloul.araneae.cluster.rest.models.Error._
 
 /**
  * Defines Exception and Rejection handlers to be used in API definitions.

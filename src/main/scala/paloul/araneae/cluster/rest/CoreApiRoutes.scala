@@ -1,11 +1,11 @@
-package paloul.araneae.reasoner.rest
+package paloul.araneae.cluster.rest
 
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.server
 import akka.http.scaladsl.server.Directives._
-import paloul.araneae.reasoner.Settings
-import paloul.araneae.reasoner.util.LoggerEnabled
+import paloul.araneae.cluster.Settings
+import paloul.araneae.cluster.util.LoggerEnabled
 
 /**
  * CoreApiRoutes is the general Route class. This is where certain things

@@ -1,4 +1,4 @@
-package paloul.araneae.reasoner
+package paloul.araneae.cluster
 
 import akka.actor._
 import com.typesafe.config.Config
