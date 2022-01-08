@@ -2,7 +2,11 @@ package paloul.araneae.cluster
 
 import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
+import paloul.araneae.cluster.util.Settings
 
+/**
+ * Supporting the Main class with added Settings features
+ */
 trait MainSettingsSupport {
 
   private val log: Logger = LoggerFactory.getLogger("MainSettingsSupport")

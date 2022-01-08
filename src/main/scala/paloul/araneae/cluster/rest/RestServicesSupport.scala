@@ -7,8 +7,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, RejectionHandler, Route}
 import org.slf4j.LoggerFactory
-import paloul.araneae.cluster.Settings
 import paloul.araneae.cluster.rest.util.ErrorHandlers
+import paloul.araneae.cluster.util.Settings
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt

@@ -4,8 +4,7 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.server
 import akka.http.scaladsl.server.Directives._
-import paloul.araneae.cluster.Settings
-import paloul.araneae.cluster.util.LoggerEnabled
+import paloul.araneae.cluster.util.{LoggerEnabled, Settings}
 
 /**
  * CoreApiRoutes is the general Route class. This is where certain things

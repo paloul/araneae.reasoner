@@ -1,4 +1,4 @@
-package paloul.araneae.cluster
+package paloul.araneae.cluster.util
 
 import akka.actor._
 import com.typesafe.config.Config
@@ -37,6 +37,7 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
 class Settings(val config: Config) extends Extension {
 
   import scala.concurrent.duration._
+  import scala.jdk.CollectionConverters._
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
 
@@ -49,12 +50,19 @@ class Settings(val config: Config) extends Extension {
     // Holds config params from application.conf concerning the Araneae App settings
     val akkaClusterName: String = config.getString("application.akka-cluster-name")
     val akkaRemotingPort: Int = config.getInt("application.akka-remoting-port")
-    val akkaTimeout: Duration = Duration(config.getString("application.akka-timeout"))
+    val akkaAskTimeout: Duration = Duration(config.getString("application.akka-ask-timeout"))
     val akkaSeedHost: String = config.getString("application.akka-seed-host")
     val akkaSeedPort: Int = config.getInt("application.akka-seed-port")
     val akkaHttpHost: String = config.getString("application.akka-http-host")
     val akkaHttpPort: Int = config.getInt("application.akka-http-port")
     val cloudDeploy: Boolean = config.getBoolean("application.cloud-deploy")
+  }
+
+  object kafka_processor {
+    val servers = config.getString("application.kafka-processor.servers")
+    val topics = config.getStringList("application.kafka-processor.topics").asScala.toList
+    val group = config.getString("application.kafka-processor.group")
+
   }
 
   // ******************************************************************************
