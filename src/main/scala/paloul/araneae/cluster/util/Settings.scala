@@ -59,10 +59,13 @@ class Settings(val config: Config) extends Extension {
   }
 
   object kafka_processor {
-    val servers = config.getString("application.kafka-processor.servers")
-    val topics = config.getStringList("application.kafka-processor.topics").asScala.toList
-    val group = config.getString("application.kafka-processor.group")
+    object entity {
+      val servers = config.getString("application.kafka-processor.entity.servers")
+      val topic = config.getString("application.kafka-processor.entity.topic")
+      val group = config.getString("application.kafka-processor.entity.group")
+    }
 
+    // You can add settings for more specialized data producers as well, i.e. cameras, drones, cars.  
   }
 
   // ******************************************************************************
