@@ -11,7 +11,7 @@ object Main extends MainServicesSupport with MainSettingsSupport {
 
   /**
    * Initialize the Actor System and setup root behaviors using ServicesSupport trait
-   * @param settings
+   * @param settings Settings loaded with values from application.conf
    */
   def init(settings: Settings): Unit = {
     ActorSystem(
@@ -40,6 +40,9 @@ object Main extends MainServicesSupport with MainSettingsSupport {
   def main(args: Array[String]): Unit = {
 
     // Load the application.conf file and create our own Settings helper class
+    // The Settings class is the very first thing created. This is to update
+    // certain fields in application.conf dynamically, i.e. Akka Cluster Seed list,
+    // before ActorSystem takes hold.
     val settings: Settings = settings
 
     // Pass the dynamic settings over to init method
