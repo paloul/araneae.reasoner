@@ -39,16 +39,8 @@ object Main extends MainServicesSupport with MainSettingsSupport {
     // Load the application.conf file and create our own Settings helper class
     val settings: Settings = settings
 
-    //init(settings)
-
-    // TODO: Delete all below. No need after initServices is implemented
-
-    // Root Behavior is the entry point for the whole akka cluster. It is the main behavior (actor)
-    // that all others spawn from, i.e. Cluster Sharding, Akka-Http APIs, etc.
-    // TODO: Define rootBehavior
-
-    // Start the Actor System
-    //val system = ActorSystem[Nothing](rootBehavior, settings.application.akkaClusterName, settings.config)
+    // Pass the dynamic settings over to init method 
+    init(settings)
 
   }
 }
