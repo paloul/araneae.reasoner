@@ -10,7 +10,7 @@ import paloul.araneae.cluster.util.Settings
 object Main extends MainServicesSupport with MainSettingsSupport {
 
   /**
-   * Initialize the Actor System
+   * Initialize the Actor System and setup root behaviors using ServicesSupport trait
    * @param settings
    */
   def init(settings: Settings): Unit = {
@@ -34,12 +34,15 @@ object Main extends MainServicesSupport with MainSettingsSupport {
     )
   }
 
+  /**
+   * Main Entry point of the application
+   */
   def main(args: Array[String]): Unit = {
 
     // Load the application.conf file and create our own Settings helper class
     val settings: Settings = settings
 
-    // Pass the dynamic settings over to init method 
+    // Pass the dynamic settings over to init method
     init(settings)
 
   }
