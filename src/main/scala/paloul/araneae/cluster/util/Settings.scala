@@ -1,7 +1,10 @@
 package paloul.araneae.cluster.util
 
 import akka.actor._
+import akka.actor.typed.ActorSystem
 import com.typesafe.config.Config
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
 /**
  * This companion object here should not be touched, its basic infrastructure support
@@ -21,10 +24,10 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
   override def lookup: Settings.type = Settings
 
   // This method will be called by Akka to instantiate our Extension
-  override def createExtension(system: ExtendedActorSystem): Settings = apply(system.settings.config)
+  override def createExtension(system: akka.actor.ExtendedActorSystem): Settings = apply(system.settings.config)
 
   // Needed to get the type right when used from Java
-  override def get(system: ActorSystem): Settings = super.get(system)
+  override def get(system: akka.actor.ActorSystem): Settings = super.get(system)
 }
 
 /**
@@ -37,7 +40,6 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
 class Settings(val config: Config) extends Extension {
 
   import scala.concurrent.duration._
-  import scala.jdk.CollectionConverters._
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
 
@@ -59,10 +61,40 @@ class Settings(val config: Config) extends Extension {
   }
 
   object kafka_processor {
-    object entity {
-      val servers = config.getString("application.kafka-processor.entity.servers")
-      val topic = config.getString("application.kafka-processor.entity.topic")
-      val group = config.getString("application.kafka-processor.entity.group")
+    import akka.kafka.ConsumerSettings
+    import akka.cluster.sharding.typed.scaladsl.EntityTypeKey
+
+    object drone {
+      import paloul.araneae.cluster.actors.Drone
+
+      val servers: String = config.getString("application.kafka-processor.drone.servers")
+      val topic: String = config.getString("application.kafka-processor.drone.topic")
+      val group: String = config.getString("application.kafka-processor.drone.group")
+
+      /**
+       * Using the same consumer group id for the cluster sharding entity type key name, we can setup
+       * multiple consumer groups and connect with a different sharded entity coordinator for each.
+       */
+      val entityTypeKey: EntityTypeKey[Drone.Command] = EntityTypeKey(group)
+    }
+
+    /**
+     * Given the parameters, returns a Kafka Consumer Setting
+     * @param system
+     * @param servers
+     * @param groupId
+     * @return
+     */
+    def kafkaConsumerSettings(system: ActorSystem[_],
+                              servers: String,
+                              groupId: String,
+                              ): ConsumerSettings[String, Array[Byte]] = {
+
+      ConsumerSettings(system, new StringDeserializer, new ByteArrayDeserializer)
+          .withBootstrapServers(servers)
+          .withGroupId(groupId)
+          .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+          .withStopTimeout(0.seconds)
     }
 
     // You can add settings for more specialized data producers as well, i.e. cameras, drones, cars.  
