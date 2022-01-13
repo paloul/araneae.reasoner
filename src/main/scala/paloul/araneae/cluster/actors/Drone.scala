@@ -23,25 +23,29 @@ object Drone {
 
   /** Base Message type for all outgoing Drone messages */
   sealed trait Reply extends CborSerializable
+
+  /** State */
+  final case class GetDroneState(droneId: String, replyTo: ActorRef[DroneState]) extends Command
+  final case class DroneState(health: Int, battery: Int) extends Reply
   //************************************************************************************
 
   /**
    * Instantiates a new Drone given the id. Only accessible from companion object
-   * @param id
+   * @param id A unique string representing a unique drone instance
    * @return
    */
   private def apply(id: String): Behavior[Command] =
     Behaviors.setup { context =>
       Behaviors.withTimers { timers =>
-        // Instantiate a new Drone with initial behavior set to inactive
-        new Drone(id, context, timers).inactive(0)
+        // Instantiate a new Drone with initial behavior set to inactive and default DroneState
+        new Drone(id, context, timers).inactive(DroneState(100,100))
       }
     }
 
   /**
    * Initialize the cluster sharding mechanism for Drone actors
-   * @param system
-   * @param settings
+   * @param system Reference to Akka System
+   * @param settings Reference to Settings for access to configuration env variables
    * @return
    */
   def shardingInit(system: ActorSystem[_], settings: Settings): Future[ActorRef[Command]] = {
@@ -71,8 +75,8 @@ object Drone {
 /**
  * Actual Drone class that can only be created with the companion object. The constructor parameters are immutable
  * instance fields and are accessible from member methods. This still follows the functional actor behavior style.
- * @param context
- * @param timers
+ * @param context The typed Actor Context
+ * @param timers Reference to Time Scheduler that allows instance to send itself regular timed messages
  */
 class Drone private (id: String,
                      context: ActorContext[Drone.Command],
@@ -80,9 +84,13 @@ class Drone private (id: String,
 
   import Drone._
 
-  private def inactive(n: Int): Behavior[Command] =
+  private def inactive(droneState: DroneState): Behavior[Command] =
     Behaviors.receiveMessage {
-      _ =>
+      case GetDroneState(droneId, replyTo) =>
+        context.log.info("Requesting state for Drone[{}]", droneId)
+        replyTo ! droneState
+        Behaviors.same
+      case _ =>
         context.log.info("Drone[{}] received a message", id)
         Behaviors.same
     }

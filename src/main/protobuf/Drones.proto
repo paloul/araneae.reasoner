@@ -2,17 +2,17 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "paloul.araneae.cluster.protobuf";
-option java_outer_classname = "Drones";
+option java_outer_classname = "DronesProto";
 
 service DroneService {
-  rpc  DroneStats (DroneStatsRequest) returns (DroneStatsResponse) {}
+  rpc  DroneState (DroneStateRequest) returns (DroneStateResponse) {}
 }
 
-message DroneStatsRequest {
+message DroneStateRequest {
   string id = 1;
 }
 
-message DroneStatsResponse {
+message DroneStateResponse {
   string id = 1;
   int32 health = 2;
   int32 battery = 3;

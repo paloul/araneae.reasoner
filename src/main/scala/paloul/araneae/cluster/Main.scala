@@ -13,10 +13,10 @@ object Main extends MainSettingsSupport with MainSupportDrones {
     // The Settings class is the very first thing created. This is to update
     // certain fields in application.conf dynamically, i.e. Akka Cluster Seed list,
     // before ActorSystem takes hold.
-    val settings: Settings = settings
+    val s: Settings = settings()
 
     // Pass the dynamic settings over to init methods
-    initDrones(settings)
+    initDrones(s)
 
   }
 }
