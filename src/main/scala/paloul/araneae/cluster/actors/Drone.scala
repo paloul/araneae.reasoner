@@ -32,7 +32,7 @@ object Drone {
   /**
    * Instantiates a new Drone given the id. Only accessible from companion object
    * @param id A unique string representing a unique drone instance
-   * @return
+   * @return The Behavior reference to an initial inactive state handler of a new Drone instance
    */
   private def apply(id: String): Behavior[Command] =
     Behaviors.setup { context =>
@@ -46,7 +46,7 @@ object Drone {
    * Initialize the cluster sharding mechanism for Drone actors
    * @param system Reference to Akka System
    * @param settings Reference to Settings for access to configuration env variables
-   * @return
+   * @return An Akka Cluster Shard Manager actor reference able to receive Drone.Command messages
    */
   def shardingInit(system: ActorSystem[_], settings: Settings): Future[ActorRef[Command]] = {
     import system.executionContext
@@ -82,6 +82,7 @@ class Drone private (id: String,
                      context: ActorContext[Drone.Command],
                      timers: TimerScheduler[Drone.Command]) {
 
+  // Import items defined inside companion object
   import Drone._
 
   private def inactive(droneState: DroneState): Behavior[Command] =

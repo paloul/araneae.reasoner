@@ -24,7 +24,7 @@ class DroneGrpcService(system: ActorSystem[_], shardRegion: ActorRef[Drone.Comma
   /**
    * Implementation of the DroneState GRPC Service in protobuf file Drones.proto
    * @param in The protobuf message for requesting drone state
-   * @return
+   * @return A future encapsulating a DroneStateResponse message
    */
   override def droneState(in: DroneStateRequest): Future[DroneStateResponse] = {
     shardRegion
