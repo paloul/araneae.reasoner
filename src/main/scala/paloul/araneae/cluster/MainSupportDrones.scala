@@ -3,12 +3,15 @@ package paloul.araneae.cluster
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
+import akka.http.scaladsl.Http
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
 import org.slf4j.{Logger, LoggerFactory}
 import paloul.araneae.cluster.actors.Drone
+import paloul.araneae.cluster.processors.DroneKafkaProcessor
 import paloul.araneae.cluster.util.Settings
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 //************************************************************************************
@@ -83,6 +86,35 @@ trait MainSupportDrones {
       case (_, BindingFailed(_)) =>
         context.log.info("Something")
         Behaviors.same
+  }
+
+  /**
+   * State of behavior that is activated after cluster is joined and sharding has started. Starts grpc services.
+   * @param context Reference to Actor Context
+   * @param region Reference to Sharding Manager
+   * @param settings Reference to Settings for access to configuration env variables
+   * @return
+   */
+  private def start(context: ActorContext[Command],
+                    region: ActorRef[Drone.Command],
+                    settings: Settings
+                   ): Behavior[Command] = {
+
+    import context.executionContext
+
+    context.log.info("Sharding started and joined the cluster. Starting Drone's Kafka Processor")
+
+    val processor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
+    val binding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
+
+    binding.onComplete {
+      case Failure(t) =>
+        context.self ! BindingFailed(t)
+      case _ =>
+    }
+
+    running(context, binding, processor)
+
   }
 
   // TODO: Build this out

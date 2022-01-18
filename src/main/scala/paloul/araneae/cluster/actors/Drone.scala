@@ -52,6 +52,7 @@ object Drone {
     import system.executionContext
 
     // Create the Kafka Message Extractor for sharded kafka clustering
+    system.log.info("Creating Kafka Message Extractor...")
     KafkaClusterSharding(system).messageExtractorNoEnvelope(
       timeout = FiniteDuration(settings.application.akkaAskTimeout.length, settings.application.akkaAskTimeout.unit),
       topic = settings.kafka_processor.drone.topic,
