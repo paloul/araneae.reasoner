@@ -107,7 +107,7 @@ trait MainSupportDrones {
     val droneKafkaProcessor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
     val grpcBinding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
 
-    binding.onComplete {
+    grpcBinding.onComplete {
       case Failure(t) =>
         context.self ! BindingFailed(t)
       case _ =>
@@ -140,6 +140,19 @@ trait MainSupportDrones {
         Behaviors.stopped
     }
 
-  // TODO: Build this out
+  /**
+   *
+   * @param system
+   * @param region
+   * @param settings
+   * @return
+   */
+  private def startGrpc(system: ActorSystem[_],
+                        region: ActorRef[Drone.Command],
+                        settings: Settings): Future[Http.ServerBinding] = {
+
+    //TODO: Implement this
+
+  }
 
 }
