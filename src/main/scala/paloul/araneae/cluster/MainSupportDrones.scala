@@ -1,6 +1,6 @@
 package paloul.araneae.cluster
 
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
 import akka.http.scaladsl.Http
@@ -104,8 +104,8 @@ trait MainSupportDrones {
 
     context.log.info("Sharding started and joined the cluster. Starting Drone's Kafka Processor")
 
-    val processor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
-    val binding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
+    val droneKafkaProcessor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
+    val grpcBinding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
 
     binding.onComplete {
       case Failure(t) =>
@@ -113,9 +113,32 @@ trait MainSupportDrones {
       case _ =>
     }
 
-    running(context, binding, processor)
+    running(context, grpcBinding, droneKafkaProcessor)
 
   }
+
+  /**
+   *
+   * @param context Reference to Actor Context
+   * @param grpcBinding Reference to the GRPC ServerBinding Future
+   * @param droneKafkaProcessor Reference to the behavior running from DroneKafkaProcessor
+   * @return
+   */
+  private def running(context: ActorContext[Command],
+                      grpcBinding: Future[Http.ServerBinding],
+                      droneKafkaProcessor: ActorRef[Nothing]): Behavior[Command] =
+    Behaviors.receiveMessagePartial[Command] {
+      case BindingFailed(t) =>
+        context.log.error("Failed to bind the grpc front end", t)
+
+        Behaviors.stopped
+    }.receiveSignal {
+      case (context, Terminated(`droneKafkaProcessor`)) =>
+        context.log.warn("Kafka event processor stopped. Shutting down")
+
+        grpcBinding.map(_.unbind())(context.executionContext)
+        Behaviors.stopped
+    }
 
   // TODO: Build this out
 
