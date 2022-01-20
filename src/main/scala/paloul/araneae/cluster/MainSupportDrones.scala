@@ -4,11 +4,13 @@ import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
-import org.slf4j.{Logger, LoggerFactory}
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.processors.DroneKafkaProcessor
+import paloul.araneae.cluster.protobuf.DroneServiceHandler
+import paloul.araneae.cluster.services.grpc.DroneGrpcService
 import paloul.araneae.cluster.util.Settings
 
 import scala.concurrent.Future
@@ -73,19 +75,17 @@ trait MainSupportDrones {
 
       case (context, ShardingStarted(region)) if joinedCluster =>
         context.log.info("Sharding has started")
-        Behaviors.same
+        start(context, region, settings)
       case (_, ShardingStarted(region)) =>
         context.log.info("Sharding has started")
-        Behaviors.same
+        starting(context, Some(region), joinedCluster, settings)
       case (context, NodeMemberUp) if sharding.isDefined =>
         context.log.info("Member has joined the cluster")
-        Behaviors.same
+        start(context, sharding.get, settings)
       case (_, NodeMemberUp) =>
         context.log.info("Member has joined the cluster")
-        Behaviors.same
-      case (_, BindingFailed(_)) =>
-        context.log.info("Something")
-        Behaviors.same
+        starting(context, sharding, joinedCluster = true, settings)
+
   }
 
   /**
@@ -93,7 +93,7 @@ trait MainSupportDrones {
    * @param context Reference to Actor Context
    * @param region Reference to Sharding Manager
    * @param settings Reference to Settings for access to configuration env variables
-   * @return
+   * @return After initiate start state, returns the running behavior
    */
   private def start(context: ActorContext[Command],
                     region: ActorRef[Drone.Command],
@@ -122,7 +122,7 @@ trait MainSupportDrones {
    * @param context Reference to Actor Context
    * @param grpcBinding Reference to the GRPC ServerBinding Future
    * @param droneKafkaProcessor Reference to the behavior running from DroneKafkaProcessor
-   * @return
+   * @return A Behavior of type Command to handle running state, waiting for termination signal
    */
   private def running(context: ActorContext[Command],
                       grpcBinding: Future[Http.ServerBinding],
@@ -142,17 +142,21 @@ trait MainSupportDrones {
 
   /**
    *
-   * @param system
-   * @param region
-   * @param settings
-   * @return
+   * @param system Reference to typed Actor System
+   * @param region Reference to Sharding Manager
+   * @param settings Reference to Settings for access to configuration env variables
+   * @return A Future of type ServerBinding, which will determine if service successfully bound
    */
   private def startGrpc(system: ActorSystem[_],
                         region: ActorRef[Drone.Command],
                         settings: Settings): Future[Http.ServerBinding] = {
 
-    //TODO: Implement this
+    // Create service handlers
+    val service: HttpRequest => Future[HttpResponse] =
+      DroneServiceHandler(new DroneGrpcService(system, region, settings))(system.classicSystem)
 
+    // Bind service handler servers and return the binding itself as a future
+    Http()(system.classicSystem).newServerAt(
+      settings.application.akkaHttpHost, settings.application.akkaHttpPort).bind(service)
   }
-
 }
