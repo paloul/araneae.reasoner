@@ -3,6 +3,9 @@ package paloul.araneae.cluster.processors
 import akka.Done
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import akka.kafka.{ConsumerRebalanceEvent, Subscriptions}
+import akka.kafka.cluster.sharding.KafkaClusterSharding
+import akka.kafka.scaladsl.Consumer
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.util.Settings
 
@@ -41,11 +44,31 @@ object DroneKafkaProcessor {
       }.narrow
   }
 
-  private def startConsumingFromTopic(actorSystem: ActorSystem[_],
+  private def startConsumingFromTopic(system: ActorSystem[_],
                                       shardRegion: ActorRef[Drone.Command],
                                       settings: Settings): Future[Done] = {
 
-    // TODO: Implement me
+    // obtain an Akka classic ActorRef that will handle consumer group rebalance events
+    val rebalanceListener: ActorRef[ConsumerRebalanceEvent] =
+      KafkaClusterSharding(system).rebalanceListener(settings.kafka_processor.drone.entityTypeKey)
+
+    // Need to convert the rebalance listener to a classic ActorRef until Alpakka Kafka supports Akka Typed
+    import akka.actor.typed.scaladsl.adapter._
+    val subscription = Subscriptions
+      .topics(settings.kafka_processor.drone.topic)
+      .withRebalanceListener(rebalanceListener.toClassic)
+
+    // Get kafka consumer settings for Drones
+    val kafkaConsumerSettings = settings.kafka_processor.kafkaConsumerSettings(
+      system, settings.kafka_processor.drone.servers, settings.kafka_processor.drone.group
+    )
+
+    Consumer.sourceWithOffsetContext(kafkaConsumerSettings, subscription)
+      .mapAsync(20) { record =>
+
+
+
+      }
 
   }
 
