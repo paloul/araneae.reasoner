@@ -69,7 +69,7 @@ class Settings(val config: Config) extends Extension {
       import paloul.araneae.cluster.actors.Drone
 
       val servers: String = config.getString("application.kafka-processor.drone.servers")
-      val topic: List[String] = config.getStringList("application.kafka-processor.drone.topics").asScala.toList
+      val topics: List[String] = config.getStringList("application.kafka-processor.drone.topics").asScala.toList
       val group: String = config.getString("application.kafka-processor.drone.group")
 
       /**
