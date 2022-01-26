@@ -40,6 +40,7 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
 class Settings(val config: Config) extends Extension {
 
   import scala.concurrent.duration._
+  import scala.jdk.CollectionConverters._
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
 
@@ -68,7 +69,7 @@ class Settings(val config: Config) extends Extension {
       import paloul.araneae.cluster.actors.Drone
 
       val servers: String = config.getString("application.kafka-processor.drone.servers")
-      val topic: String = config.getString("application.kafka-processor.drone.topic")
+      val topic: List[String] = config.getStringList("application.kafka-processor.drone.topics").asScala.toList
       val group: String = config.getString("application.kafka-processor.drone.group")
 
       /**
