@@ -44,6 +44,7 @@ object Drone {
 
   /**
    * Initialize the cluster sharding mechanism for Drone actors
+   * https://doc.akka.io/docs/alpakka-kafka/current/cluster-sharding.html
    * @param system Reference to Akka System
    * @param settings Reference to Settings for access to configuration env variables
    * @return An Akka Cluster Shard Manager actor reference able to receive Drone.Command messages
@@ -55,8 +56,12 @@ object Drone {
     system.log.info("Creating Kafka Message Extractor...")
     KafkaClusterSharding(system).messageExtractorNoEnvelope(
       timeout = FiniteDuration(settings.application.akkaAskTimeout.length, settings.application.akkaAskTimeout.unit),
-      topic = settings.kafka_processor.drone.topic,
-      entityIdExtractor = (msg: Command) => msg.droneId, // The entity id is the drone id inside the message for target recipient
+      // The head topic in topics is used merely to query Kafka cluster and retrieve number of partitions.
+      // The number of partitions is used to create the underlying KafkaShardingNoEnvelopeExtractor
+      // Important Note: Ensure all topics in the list are configured with equal partitions on the Kafka cluster
+      topic = settings.kafka_processor.drone.topics.head,
+      // The entity id is the drone id inside the message for target recipient
+      entityIdExtractor = (msg: Command) => msg.droneId,
       settings = settings.kafka_processor.kafkaConsumerSettings(
         system, settings.kafka_processor.drone.servers, settings.kafka_processor.drone.group)
     ).map(messageExtractor => {
