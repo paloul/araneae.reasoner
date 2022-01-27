@@ -85,6 +85,9 @@ trait MainSupportDrones {
       case (_, NodeMemberUp) =>
         context.log.info("Member has joined the cluster")
         starting(context, sharding, joinedCluster = true, settings)
+      case (_, BindingFailed(t)) =>
+        context.log.error("Binding has failed", t)
+        Behaviors.stopped
 
   }
 
@@ -128,11 +131,14 @@ trait MainSupportDrones {
                       grpcBinding: Future[Http.ServerBinding],
                       droneKafkaProcessor: ActorRef[Nothing]): Behavior[Command] =
     Behaviors.receiveMessagePartial[Command] {
+
       case BindingFailed(t) =>
         context.log.error("Failed to bind the grpc front end", t)
 
         Behaviors.stopped
+
     }.receiveSignal {
+
       case (context, Terminated(`droneKafkaProcessor`)) =>
         context.log.warn("Kafka event processor stopped. Shutting down")
 

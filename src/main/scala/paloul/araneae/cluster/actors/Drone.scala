@@ -1,5 +1,6 @@
 package paloul.araneae.cluster.actors
 
+import akka.Done
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.cluster.sharding.external.ExternalShardAllocationStrategy
@@ -21,12 +22,16 @@ object Drone {
     def droneId: String
   }
 
-  /** Base Message type for all outgoing Drone messages */
-  sealed trait Reply extends CborSerializable
+  /** Commands */
+  final case class SetDroneState(droneId: String, health: Int, battery: Int, replyTo: ActorRef[Done]) extends Command
+  final case class GetDroneState(droneId: String, replyTo: ActorRef[DroneState]) extends Command
+
+  final case class SetDroneLocation(droneId: String, lat: Int, long: Int, replyTo: ActorRef[Done]) extends Command
+  final case class GetDroneLocation(droneId: String, replyTo: ActorRef[DroneLocation]) extends Command
 
   /** State */
-  final case class GetDroneState(droneId: String, replyTo: ActorRef[DroneState]) extends Command
-  final case class DroneState(health: Int, battery: Int) extends Reply
+  final case class DroneState(health: Int, battery: Int) extends CborSerializable
+  final case class DroneLocation(lat: Int, lon: Int) extends CborSerializable
   //************************************************************************************
 
   /**
@@ -37,8 +42,12 @@ object Drone {
   private def apply(id: String): Behavior[Command] =
     Behaviors.setup { context =>
       Behaviors.withTimers { timers =>
-        // Instantiate a new Drone with initial behavior set to inactive and default DroneState
-        new Drone(id, context, timers).inactive(DroneState(100,100))
+        // Instantiate a new Drone with initial behavior set to inactive and default state values
+        new Drone(id, context, timers)
+          .inactive(
+            DroneState(100,100),
+            DroneLocation(0,0)
+          )
       }
     }
 
@@ -81,6 +90,8 @@ object Drone {
 /**
  * Actual Drone class that can only be created with the companion object. The constructor parameters are immutable
  * instance fields and are accessible from member methods. This still follows the functional actor behavior style.
+ * https://doc.akka.io/docs/akka/current/typed/style-guide.html#functional-versus-object-oriented-style
+ * https://doc.akka.io/docs/akka/current/typed/style-guide.html#passing-around-too-many-parameters
  * @param context The typed Actor Context
  * @param timers Reference to Time Scheduler that allows instance to send itself regular timed messages
  */
@@ -91,11 +102,15 @@ class Drone private (id: String,
   // Import items defined inside companion object
   import Drone._
 
-  private def inactive(droneState: DroneState): Behavior[Command] =
+  private def inactive(droneState: DroneState, droneLocation: DroneLocation): Behavior[Command] =
     Behaviors.receiveMessage {
       case GetDroneState(droneId, replyTo) =>
         context.log.info("Requesting state for Drone[{}]", droneId)
         replyTo ! droneState
+        Behaviors.same
+      case GetDroneLocation(droneId, replyTo) =>
+        context.log.info("Requesting location for Drone[{}]", droneId)
+        replyTo ! droneLocation
         Behaviors.same
       case _ =>
         context.log.info("Drone[{}] received a message", id)
