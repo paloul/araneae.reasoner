@@ -4,7 +4,7 @@ name := "araneae.cluster"
 
 organization := "paloul"
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.8"
 
 exportJars := true
 
@@ -30,8 +30,8 @@ enablePlugins(AkkaGrpcPlugin)
 libraryDependencies ++= {
   val AkkaVersion = "2.6.18"
   val AkkaHttpVersion = "10.2.7"
-  val AkkaStreamKafkaVersion = "2.1.1" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
-  val AkkaManagementVersion = "1.1.1"
+  val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
+  val AkkaManagementVersion = "1.1.3"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
   val JacksonVersionVersion = "2.13.1"
@@ -74,7 +74,11 @@ libraryDependencies ++= {
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
     "ch.qos.logback"                % "logback-classic"                         % "1.2.10",
-    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1"
+    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1",
+
+    // MapDB
+    // https://github.com/jankotek/MapDB
+    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
 
   )
 }
