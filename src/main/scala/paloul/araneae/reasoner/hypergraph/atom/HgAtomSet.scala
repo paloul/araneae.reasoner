@@ -1,6 +1,6 @@
 package paloul.araneae.reasoner.hypergraph.atom
 
-import paloul.araneae.reasoner.hypergraph.HgHandle
+import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 
 import scala.collection.mutable.HashSet
 

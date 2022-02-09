@@ -1,6 +1,6 @@
 package paloul.araneae.reasoner.hypergraph.atom
 
-import paloul.araneae.reasoner.hypergraph.HgHandle
+import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 
 /**
  * Represents an atom's incidence set. That is, a set containing all atoms pointing to a given

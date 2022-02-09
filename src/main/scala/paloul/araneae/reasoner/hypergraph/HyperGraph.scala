@@ -1,5 +1,6 @@
 package paloul.araneae.reasoner.hypergraph
 import paloul.araneae.reasoner.hypergraph.atom.HgIncidenceSet
+import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 import paloul.araneae.reasoner.hypergraph.query.HgQueryCondition
 
 /**
