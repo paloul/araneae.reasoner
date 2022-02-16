@@ -32,12 +32,12 @@ object UUID5 {
 
   /**
    * Generate UUID instance from a string representation of UUID
-   * @param uuid A string that specifies a UUID
+   * @param uuidString A string that specifies a UUID
    * @return UUID with the specified value defined by uuid string
    */
-  def fromString(uuid: String): UUID = {
+  def fromString(uuidString: String): UUID = {
     // Use static method to convert String UUID to java.util.UUID instance
-    val uuid = java.util.UUID.fromString(uuid)
+    val uuid = java.util.UUID.fromString(uuidString)
 
     // Convert to our UUID5 wrapper
     new UUID5(uuid.getMostSignificantBits, uuid.getLeastSignificantBits)
