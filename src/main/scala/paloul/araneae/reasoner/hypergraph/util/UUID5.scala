@@ -1,5 +1,4 @@
 package paloul.araneae.reasoner.hypergraph.util
-import java.util
 
 /**
  * Companion object to UUID5. Provides the only means to create UUID5 instances.
@@ -78,7 +77,7 @@ object UUID5 {
   /**
    * Takes a byte array representing a Level 5 UUID, isolates the Most and Least
    * Significant bits and uses them to create a Java Util UUID
-   * @param data
+   * @param data Byte Array of length 16 to turn into UUID
    * @return java.util.uuid
    */
   private def constructType5UUID(data: Array[Byte]): UUID = {
