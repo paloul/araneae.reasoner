@@ -78,7 +78,11 @@ libraryDependencies ++= {
 
     // MapDB
     // https://github.com/jankotek/MapDB
-    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
+    "org.mapdb"                     % "mapdb"                                   % "3.0.8",
+
+    // ChronicleMap
+    // https://github.com/OpenHFT/Chronicle-Map
+    "net.openhft"                   % "chronicle-map"                           % "3.21.86"
 
   )
 }
