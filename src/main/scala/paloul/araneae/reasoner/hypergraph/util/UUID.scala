@@ -11,6 +11,8 @@ trait UUID {
 
   protected val bytes: Array[Byte]
 
+  def getBytes: Array[Byte] = bytes
+
   def getLeastSignificantBits: Long = uuid.getLeastSignificantBits
 
   def getMostSignificantBits: Long = uuid.getMostSignificantBits
