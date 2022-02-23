@@ -100,7 +100,7 @@ object UUID3 {
  *
  * @param javaUuid The java.util.uuid instance this class instance will be wrapping
  */
-class UUID3 private (val javaUuid: java.util.UUID) extends UUID {
+class UUID3 private (javaUuid: java.util.UUID) extends UUID {
 
   override val uuid: java.util.UUID = javaUuid
 
