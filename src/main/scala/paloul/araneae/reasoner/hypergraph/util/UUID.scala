@@ -9,13 +9,15 @@ trait UUID {
 
   protected val uuid: java.util.UUID
 
+  protected val bytes: Array[Byte]
+
   def getLeastSignificantBits: Long = uuid.getLeastSignificantBits
 
   def getMostSignificantBits: Long = uuid.getMostSignificantBits
 
   override def toString: String = uuid.toString
 
-  override def hashCode(): Int = uuid.hashCode
+  override def hashCode: Int = uuid.hashCode
 
   override def equals(obj: Any): Boolean = uuid.equals(obj)
 
