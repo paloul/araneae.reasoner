@@ -12,8 +12,7 @@ import paloul.araneae.reasoner.hypergraph.util.UUID3.bytesFromUUID
  */
 object UUID3 {
 
-  private final val ARANEAE_NAMESPACE_BYTES: Array[Byte] =
-    bytesFromUUID("6aa4b626-9dad-1dd1-80b4-00c04fe818c1")
+  private final val ARANEAE_NAMESPACE_BYTES: Array[Byte] = "paloul.araneae.namespace".getBytes("UTF-8")
 
   /**
    * Instantiate a new UUID3 from given arbitrary string. Underlying UUID3 is version Level 5.
@@ -37,40 +36,6 @@ object UUID3 {
   def fromString(uuidString: String): UUID = {
     // Use static method to convert String UUID to java.util.UUID instance and create UUID3 wrapper
     new UUID3(java.util.UUID.fromString(uuidString))
-  }
-
-  /**
-   * Convert the given hex string representation of uuid to an array of bytes
-   * @param uuidHexString The uuid in string form
-   * @return Byte array representing the given uuid
-   */
-  private def bytesFromUUID(uuidHexString: String): Array[Byte] = {
-    // Remove the dashes (-) from the given uuid string
-    val normalizedUUIDHexString = uuidHexString.replace("-", "")
-
-    // There are 4 dashes (-) in any uuid. Total 36 chars long.
-    // Remove 4 dashes and you have 32 chars.
-    assert(normalizedUUIDHexString.length == 32)
-
-    val bytes = new Array[Byte](16)
-    for (i <- 0 until 16) {
-      val b = hexToByte(normalizedUUIDHexString.substring(i * 2, i * 2 + 2))
-      bytes(i) = b
-    }
-
-    bytes
-  }
-
-  /**
-   * Convert the given string that represents a single hex value to its byte representation
-   * @param hexString The hex value in string form
-   * @return Numeric value in bytes of the hex string
-   */
-  private def hexToByte(hexString: String): Byte = {
-    val firstDigit = Character.digit(hexString.charAt(0), 16)
-    val secondDigit = Character.digit(hexString.charAt(1), 16)
-
-    ((firstDigit << 4) + secondDigit).toByte
   }
 
   /**
