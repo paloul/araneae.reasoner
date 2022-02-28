@@ -1,7 +1,5 @@
 package paloul.araneae.reasoner.hypergraph.util
 
-import paloul.araneae.reasoner.hypergraph.util.UUID3.bytesFromUUID
-
 /**
  * Companion object to UUID3. Provides the only means to create UUID3 instances.
  * The class instance is light wrapper around java.util.UUID.
