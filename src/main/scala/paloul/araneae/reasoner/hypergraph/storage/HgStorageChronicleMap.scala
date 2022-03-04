@@ -129,4 +129,43 @@ class HgStorageChronicleMap private (dbStoragePath: String) extends HgStorage {
    * @return Number of links as Long pointing to the given atom
    */
   override def getIncidenceSetCardinality(handle: HgHandle): Long = ???
+
+  /**
+   * Insert a new link handle in the target atom's <code>HgHandle</code>. If the link is
+   * part of the incidence set for the atom, it will not be added, and this function will
+   * return false.
+   *
+   * @param atomHandle A unique handle to the atom who's incidence set will be updated
+   * @param linkHandle A unique handle to the newly created link
+   * @return True if added, false otherwise
+   */
+  override def addIncidenceLink(atomHandle: HgHandle, linkHandle: HgHandle): Boolean = ???
+
+  /**
+   * Remove the link handle from the given target atom's incidence set. If the link is
+   * not part of the incidence set of the given atom, nothing will be done, and this
+   * function will return false.
+   *
+   * @param atomHandle A unique handle to the atom who's incidence set will be updated
+   * @param linkHandle A unique handle to a link that no longer points to the atom
+   * @return True if removed, false otherwise
+   */
+  override def removeIncidenceLink(atomHandle: HgHandle, linkHandle: HgHandle): Boolean = ???
+
+  /**
+   * Remove the whole incidence set of the given target atom. Typically used only when
+   * the atom itself is being completely removed from the hypergraph.
+   *
+   * @param atomHandle A unique handle to the atom who's incidence set will be removed
+   * @return True if removed, false otherwise
+   */
+  override def removeIncidenceSet(atomHandle: HgHandle): Boolean = ???
+
+  /**
+   * Close the underlying storage mechanism. Reserved for internal use. Based on
+   * implementation of underlying storage, might not be required.
+   *
+   * @return True if successful cleanup and exit, false otherwise
+   */
+  override def close(): Boolean = ???
 }
