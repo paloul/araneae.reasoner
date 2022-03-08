@@ -2,15 +2,15 @@ package paloul.araneae.reasoner.hypergraph.atom
 
 import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 
-import scala.collection.mutable.HashSet
+import scala.collection.mutable
 
 /**
  * Represents temporary construction of a set of atoms. A handle for each atom is stored in the set.
  */
-class HgAtomSet extends Set[HgHandle] {
+class HgAtomSet extends mutable.Set[HgHandle] {
 
   /** HgAtomSet is backed by a HashSet */
-  private val hashSet: HashSet[HgHandle] = new HashSet[HgHandle]()
+  private val hashSet: mutable.LinkedHashSet[HgHandle] = new mutable.LinkedHashSet[HgHandle]()
 
   /**
    * Auxiliary constructor to aid with adding atoms to set
@@ -25,11 +25,13 @@ class HgAtomSet extends Set[HgHandle] {
     }
   }
 
-  override def incl(elem: HgHandle): Set[HgHandle] = ???
+  override def subtractOne(elem: HgHandle): HgAtomSet.this.type = ???
 
-  override def excl(elem: HgHandle): Set[HgHandle] = ???
+  override def iterator: Iterator[HgHandle] = ???
+
+  override def addOne(elem: HgHandle): HgAtomSet.this.type = ???
 
   override def contains(elem: HgHandle): Boolean = ???
 
-  override def iterator: Iterator[HgHandle] = ???
+  override def clear(): Unit = ???
 }
