@@ -1,4 +1,4 @@
-package paloul.araneae.reasoner.hypergraph.atom
+package paloul.araneae.reasoner.hypergraph.atom.link
 
 import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 
