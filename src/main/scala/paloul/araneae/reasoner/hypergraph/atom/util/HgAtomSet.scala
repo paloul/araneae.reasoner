@@ -19,10 +19,8 @@ class HgAtomSet extends mutable.Set[HgHandle] {
   def this(atomHandles: HgHandle*) = {
     this
 
-    // Get all the handles and add to our hash set
-    for(atomHandle <- atomHandles) {
-      hashSet.add(atomHandle)
-    }
+    // Add all the handles to our internal hash set
+    hashSet.addAll(atomHandles)
   }
 
   override def subtractOne(elem: HgHandle): HgAtomSet.this.type = ???
