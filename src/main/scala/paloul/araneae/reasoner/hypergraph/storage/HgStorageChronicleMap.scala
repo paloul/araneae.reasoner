@@ -27,7 +27,8 @@ object HgStorageChronicleMap {
  */
 class HgStorageChronicleMap private (dbStoragePath: String) extends HgStorage {
 
-  val dbFilePath: String = dbStoragePath
+  /** Physical file path to the location where db is stored */
+  override val dbPath: String = dbStoragePath
 
   /**
    * Create a new randomly generated persistent Handle as the key and

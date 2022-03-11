@@ -13,7 +13,7 @@ import paloul.araneae.reasoner.hypergraph.util.UUID4
 trait HgStorage {
 
   /** Physical file path to the location where db is stored */
-  val dbFilePath: String
+  val dbPath: String
 
   /**
    * Create a new randomly generated persistent Handle as the key and
