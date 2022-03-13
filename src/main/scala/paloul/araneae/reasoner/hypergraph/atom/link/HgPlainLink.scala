@@ -39,7 +39,7 @@ object HgPlainLink {
 /**
  * A simple/plain implementation of <code>HgLink</code>.
  */
-class HgPlainLink private (atomSet: HgAtomSet) extends HgLink {
+class HgPlainLink protected (atomSet: HgAtomSet) extends HgLink {
 
   /** Represents the target set of this link. */
   override protected val targetAtomSet: HgAtomSet = atomSet
@@ -73,6 +73,6 @@ class HgPlainLink private (atomSet: HgAtomSet) extends HgLink {
    * @param i The index of atom to remove. Range must be between 0 to arity-1
    * @return A handle to the target atom that was removed. Null if nothing was removed.
    */
-override def removeTargetAt(i: Int): HgHandle = ???
+  override def removeTargetAt(i: Int): HgHandle = ???
 
 }
