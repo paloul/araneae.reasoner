@@ -8,9 +8,8 @@ import paloul.araneae.reasoner.hypergraph.handle.HgHandle
  */
 object HgStorageChronicleMap {
 
-  /** Instantiate a new HgStorageChronicleMap */
+  /** Instantiate and return a new HgStorageChronicleMap */
   def apply(dbStoragePath: String): HgStorageChronicleMap = {
-
     new HgStorageChronicleMap(dbStoragePath)
   }
 

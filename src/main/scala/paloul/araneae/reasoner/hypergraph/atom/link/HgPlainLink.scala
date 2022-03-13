@@ -1,6 +1,40 @@
 package paloul.araneae.reasoner.hypergraph.atom.link
 import paloul.araneae.reasoner.hypergraph.atom.util.HgAtomSet
-import paloul.araneae.reasoner.hypergraph.handle.HgHandle
+import paloul.araneae.reasoner.hypergraph.handle.{HgHandle, HgHandleUUID}
+
+/**
+ * Companion object to <code>HgPlainLink</code>
+ */
+object HgPlainLink {
+
+  /**
+   * Instantiate and return a HgPlainLink instance with empty HgAtomSet
+   * @return
+   */
+  def apply(): HgPlainLink = {
+    new HgPlainLink(HgAtomSet())
+  }
+
+  /**
+   * Instantiate and return a HgPlainLink instance with HgAtomSet filled
+   * with the atom handles given
+   * @param atomHandles Target set of atoms pointed to by link
+   * @return
+   */
+  def apply(atomHandles: HgHandle*): HgPlainLink = {
+    new HgPlainLink(HgAtomSet(atomHandles))
+  }
+
+  /**
+   * Instantiate and return a HgPlainLink instance with HgAtomSet filled
+   * with the atom handles given
+   * @param atomHandles Target set of atoms pointed to by link
+   * @return
+   */
+  def apply(atomHandles: List[HgHandle]): HgPlainLink = {
+    new HgPlainLink(HgAtomSet(atomHandles))
+  }
+}
 
 /**
  * A simple/plain implementation of <code>HgLink</code>.
