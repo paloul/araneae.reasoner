@@ -55,6 +55,12 @@ object HgValueLink {
 class HgValueLink[A] protected (val linkValue: A, atomSet: HgAtomSet)
   extends HgPlainLink (atomSet) {
 
-
+  /**
+   * Create a string representation of this HgValueLink
+   * @return
+   */
+  override def toString: String = {
+    linkValue.toString + ":[" + atomSet.mkString(",") + "]"
+  }
 
 }

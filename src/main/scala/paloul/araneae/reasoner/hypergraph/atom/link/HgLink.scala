@@ -41,4 +41,12 @@ trait HgLink {
    */
   def removeTargetAt(i: Int): HgHandle
 
+  /**
+   * Create a string representation with items in targetAtomSet
+   * @return
+   */
+  override def toString: String = {
+    "[" + targetAtomSet.mkString(",") + "]"
+  }
+
 }
