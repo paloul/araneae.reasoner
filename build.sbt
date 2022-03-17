@@ -29,12 +29,12 @@ enablePlugins(AkkaGrpcPlugin)
 
 libraryDependencies ++= {
   val AkkaVersion = "2.6.18"
-  val AkkaHttpVersion = "10.2.7"
+  val AkkaHttpVersion = "10.2.9"
   val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
   val AkkaManagementVersion = "1.1.3"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.1"
+  val JacksonVersionVersion = "2.13.2"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -73,7 +73,7 @@ libraryDependencies ++= {
 
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
-    "ch.qos.logback"                % "logback-classic"                         % "1.2.10",
+    "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
     "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1",
 
     // MapDB
@@ -82,7 +82,7 @@ libraryDependencies ++= {
 
     // ChronicleMap
     // https://github.com/OpenHFT/Chronicle-Map
-    "net.openhft"                   % "chronicle-map"                           % "3.21.86"
+    "net.openhft"                   % "chronicle-map"                           % "3.22.7"
 
   )
 }
