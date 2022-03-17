@@ -82,7 +82,7 @@ libraryDependencies ++= {
 
     // ChronicleMap
     // https://github.com/OpenHFT/Chronicle-Map
-    "net.openhft"                   % "chronicle-map"                           % "3.22.7"
+    "net.openhft"                   % "chronicle-map"                           % "3.21.86"
 
   )
 }
