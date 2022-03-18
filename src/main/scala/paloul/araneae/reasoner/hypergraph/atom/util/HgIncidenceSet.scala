@@ -10,6 +10,7 @@ import paloul.araneae.reasoner.hypergraph.handle.HgHandle
  * The collection of all other atoms that point to the particular/given
  * atom can be across multiple unrelated links.
  * Instances of this class can be cached and queried in memory.
+ * @param atom Our atom's handle that all other atoms in the atom set point to
  */
 sealed class HgIncidenceSet(val atom: HgHandle) extends HgAtomSet {
 

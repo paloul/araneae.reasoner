@@ -31,7 +31,7 @@ class HgAtomSet protected extends mutable.Set[HgHandle] {
 
   /**
    * Auxiliary constructor to aid with adding atoms to set
-   * @param atomHandles Variable argument of HgHandles of existing atom
+   * @param atomHandles A sequence/list of HgHandles to store this this set
    */
   protected def this(atomHandles: Seq[HgHandle]) = {
     this()
