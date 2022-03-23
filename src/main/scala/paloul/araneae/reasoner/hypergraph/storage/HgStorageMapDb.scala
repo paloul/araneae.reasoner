@@ -2,29 +2,29 @@ package paloul.araneae.reasoner.hypergraph.storage
 import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 
 /**
- * The companion object to HgStorageChronicleMap. Static function calls are
+ * The companion object to HgStorageMapDb. Static function calls are
  * available under this static object. Namely, it creates a new instance of
- * HgStorageChronicleMap.
+ * HgStorageMapDb.
  */
-object HgStorageChronicleMap {
+object HgStorageMapDb {
 
-  /** Instantiate and return a new HgStorageChronicleMap */
-  def apply(dbStoragePath: String): HgStorageChronicleMap = {
-    new HgStorageChronicleMap(dbStoragePath)
+  /** Instantiate and return a new HgStorageMapDb */
+  def apply(dbStoragePath: String): HgStorageMapDb = {
+    new HgStorageMapDb(dbStoragePath)
   }
 
 }
 
 /**
- * An implementation of <code>HgStorage</code> that uses ChronicleMap as its underlying
- * storage mechanism. This implementation uses ChronicleMap to persist the HyperGraph to
+ * An implementation of <code>HgStorage</code> that uses MapDb as its underlying
+ * storage mechanism. This implementation uses MapDb to persist the HyperGraph to
  * disk via Memory Mapped files.
  *
- * https://github.com/OpenHFT/Chronicle-Map
+ * https://github.com/jankotek/MapDB
  *
  * @param dbStoragePath The path to where the files for this persistent storage are kept
  */
-class HgStorageChronicleMap private (dbStoragePath: String) extends HgStorage {
+class HgStorageMapDb private(dbStoragePath: String) extends HgStorage {
 
   /** Physical file path to the location where db is stored */
   override val dbPath: String = dbStoragePath
