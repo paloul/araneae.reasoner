@@ -38,7 +38,6 @@ object HgValueLink {
   def apply[A](linkValue: A, atomHandles: List[HgHandle]): HgValueLink[A] = {
     new HgValueLink(linkValue, HgAtomSet(atomHandles))
   }
-
 }
 
 /**

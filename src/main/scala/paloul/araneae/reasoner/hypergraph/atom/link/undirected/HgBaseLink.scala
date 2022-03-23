@@ -39,6 +39,7 @@ object HgBaseLink {
 
 /**
  * A simple/plain implementation of <code>HgLink</code>.
+ * @param atomSet Target set of atoms pointed to by link
  */
 class HgBaseLink protected(atomSet: HgAtomSet) extends HgLink {
 
@@ -91,4 +92,12 @@ class HgBaseLink protected(atomSet: HgAtomSet) extends HgLink {
    * @return A handle to the target atom that was removed. Null if nothing was removed.
    */
   override def removeTarget(hgHandle: HgHandle): HgHandle = ???
+
+  /**
+   * Create a string representation of this HgBaseLink
+   * @return
+   */
+  override def toString: String = {
+    "[" + atomSet.mkString(",") + "]"
+  }
 }
