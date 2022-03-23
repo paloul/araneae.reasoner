@@ -53,7 +53,7 @@ object HgValueLink {
  * @tparam A The arbitrary object type of the payload carried by this link
  */
 class HgValueLink[A] protected (val linkValue: A, atomSet: HgAtomSet)
-  extends HgPlainLink (atomSet) {
+  extends HgBaseLink (atomSet) {
 
   /**
    * Create a string representation of this HgValueLink
