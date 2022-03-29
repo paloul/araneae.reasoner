@@ -89,4 +89,51 @@ class HgBaseLink protected(source: HgAtomSet, target: HgAtomSet) extends HgLink 
    * @return A handle to the target atom that was removed. Null if nothing was removed.
    */
   override def removeTargetAt(i: Int): HgHandle = ???
+
+  /**
+   * Number of sources defined in this link
+   *
+   * @return Int value greater than 0
+   */
+  override def sourceArity: Int = ???
+
+  /**
+   * Check if the given <code>HgHandle</code> is referenced as a source in this link
+   *
+   * @param hgHandle A handle to check is referenced in this link
+   * @return True if the hgHandle is a source of this link, false otherwise
+   */
+  override def hasSource(hgHandle: HgHandle): Boolean = ???
+
+  /**
+   * Return the ith source in this link
+   *
+   * @param i The index of desired source. Range must be between 0 to sourceArity-1
+   * @return A handle to the source atom
+   */
+  override def sourceAt(i: Int): HgHandle = ???
+
+  /**
+   * Add a new source atom to the link.
+   *
+   * @param hgHandle A handle to the source atom that will be added
+   * @return True if added, false otherwise
+   */
+  override def addNewSource(hgHandle: HgHandle): Boolean = ???
+
+  /**
+   * Remove the source atom by its <code>HgHandle</code>
+   *
+   * @param hgHandle The handle to the source atom to remove
+   * @return A handle to the source atom that was removed. Null if nothing was removed.
+   */
+  override def removeSource(hgHandle: HgHandle): HgHandle = ???
+
+  /**
+   * Remove a source atom at index i.
+   *
+   * @param i The index of atom to source. Range must be between 0 to sourceArity-1
+   * @return A handle to the source atom that was removed. Null if nothing was removed.
+   */
+  override def removeSourceAt(i: Int): HgHandle = ???
 }
