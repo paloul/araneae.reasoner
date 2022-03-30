@@ -28,13 +28,13 @@ scalacOptions ++= Seq(
 enablePlugins(AkkaGrpcPlugin)
 
 libraryDependencies ++= {
-  val AkkaVersion = "2.6.18"
+  val AkkaVersion = "2.6.19"
   val AkkaHttpVersion = "10.2.9"
   val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
   val AkkaManagementVersion = "1.1.3"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.2"
+  val JacksonVersionVersion = "2.13.2.1"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
