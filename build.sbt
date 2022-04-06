@@ -34,7 +34,7 @@ libraryDependencies ++= {
   val AkkaManagementVersion = "1.1.3"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.2.1"
+  val JacksonVersionVersion = "2.13.2.2"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
