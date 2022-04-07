@@ -82,7 +82,7 @@ libraryDependencies ++= {
 
     // Apache Lucene
     // https://lucene.apache.org/
-    // https://search.maven.org/artifact/org.apache.lucene/lucene-core/9.1.0/jar
+    // https://search.maven.org/artifact/org.apache.lucene/lucene-core
     "org.apache.lucene"             % "lucene-core"                             % "9.1.0"
 
   )
