@@ -78,7 +78,12 @@ libraryDependencies ++= {
 
     // MapDB
     // https://github.com/jankotek/MapDB
-    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
+    "org.mapdb"                     % "mapdb"                                   % "3.0.8",
+
+    // Apache Lucene
+    // https://lucene.apache.org/
+    // https://search.maven.org/artifact/org.apache.lucene/lucene-core/9.1.0/jar
+    "org.apache.lucene"             % "lucene-core"                             % "9.1.0"
 
   )
 }
