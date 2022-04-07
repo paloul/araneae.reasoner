@@ -57,7 +57,8 @@ class HgValueLink[A] protected (val linkValue: A, source: HgAtomSet, target: HgA
    * @return
    */
   override def toString: String = {
-    "Link: [" + linkValue.toString + "]" +
+    "Link" +
+      "\n\t:Value[" + linkValue.toString + "]" +
       "\n\t:Source[" + sourceAtomSet.mkString(",") + "]" +
       "\n\t:Target[" + targetAtomSet.mkString(",") + "]"
   }
