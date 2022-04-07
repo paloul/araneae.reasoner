@@ -14,4 +14,6 @@ import paloul.araneae.reasoner.hypergraph.handle.HgHandle
  */
 sealed class HgIncidenceSet(val atom: HgHandle) extends HgAtomSet {
 
+  // This is intentionally empty. Scala builds a automatic constructor with the val atom: HgHandle definition
+
 }
