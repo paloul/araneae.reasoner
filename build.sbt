@@ -71,6 +71,10 @@ libraryDependencies ++= {
     "com.lightbend.akka.discovery"  %% "akka-discovery-kubernetes-api"          % AkkaManagementVersion,
     "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap"      % AkkaManagementVersion,
 
+    // Scala Standard Parser Combinator Library
+    // https://github.com/scala/scala-parser-combinators
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1",
+
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
     "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
