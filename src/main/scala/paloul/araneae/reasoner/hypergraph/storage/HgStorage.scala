@@ -16,22 +16,24 @@ trait HgStorage {
   val dbPath: String
 
   /**
-   * Create a new randomly generated persistent Handle as the key and
-   * store the given Handles as its value
+   * Create a new randomly generated persistent handle as the key and
+   * store the given handles as its value. This links the given
+   * <code>HgHandle</code> atoms together.
    *
-   * @param link A non-null but potentially empty array of handles that will be linked together
+   * @param handles A non-null but potentially empty array of handles that will be linked together
    * @return The newly generated handle that points to the list of given handles
    */
-  def store(link: Array[HgHandle]): HgHandle
+  def link(handles: Array[HgHandle]): HgHandle
 
   /**
-   * Store the given array of Handles as values to the one Handle acting as key
+   * Link the given <code>HgHandle</code> atoms under the atom defined by the
+   * handle parameter. The handle parameter will be used as key.
    *
    * @param handle A unique handle that refers to the link
-   * @param link A non-null but potentially empty array of handles that will be linked together
+   * @param handles A non-null but potentially empty array of HgHandles that will be linked under handle
    * @return The <code>handle</code> parameter
    */
-  def store(handle: HgHandle, link: Array[HgHandle]): HgHandle
+  def link(handle: HgHandle, handles: Array[HgHandle]): HgHandle
 
   /**
    * Write raw binary data to the underlying storage. A randomly generated handle will
@@ -118,8 +120,8 @@ trait HgStorage {
 
   /**
    * Insert a new link handle in the target atom's <code>HgHandle</code>. If the link is
-   * part of the incidence set for the atom, it will not be added, and this function will
-   * return false.
+   * already part of the incidence set for the atom, it will not be added, and this
+   * function will return false.
    *
    * @param atomHandle A unique handle to the atom who's incidence set will be updated
    * @param linkHandle A unique handle to the newly created link
