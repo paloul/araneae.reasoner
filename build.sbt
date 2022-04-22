@@ -71,9 +71,9 @@ libraryDependencies ++= {
     "com.lightbend.akka.discovery"  %% "akka-discovery-kubernetes-api"          % AkkaManagementVersion,
     "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap"      % AkkaManagementVersion,
 
-    // Scala Standard Parser Combinator Library
-    // https://github.com/scala/scala-parser-combinators
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1",
+    // parboiled2 – A Macro-Based PEG Parser Generator for Scala 2.12+
+    // https://github.com/sirthias/parboiled2
+    "org.parboiled"                 %% "parboiled"                              % "2.4.0",
 
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
