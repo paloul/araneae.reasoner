@@ -13,7 +13,7 @@ import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.processors.DroneKafkaProcessor
 import paloul.araneae.cluster.protobuf.DroneServiceHandler
 import paloul.araneae.cluster.services.grpc.DroneGrpcService
-import paloul.araneae.cluster.util.Settings
+import paloul.araneae.cluster.util.{LoggerEnabled, Settings}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
@@ -30,7 +30,7 @@ final case class BindingFailed(reason: Throwable) extends Command
 /**
  * Supporting the Main class with added root Service behaviors
  */
-trait MainSupportDrones {
+trait MainSupportDrones extends LoggerEnabled {
 
   /**
    * Initialize the Actor System and setup root behaviors using ServicesSupport trait
@@ -77,19 +77,19 @@ trait MainSupportDrones {
                       ): Behavior[Command] = Behaviors.receive[Command] {
 
       case (context, ShardingStarted(region)) if joinedCluster =>
-        context.log.info("Sharding has started")
+        log.info("Sharding has started")
         start(context, region, settings)
       case (_, ShardingStarted(region)) =>
-        context.log.info("Sharding has started")
+        log.info("Sharding has started")
         starting(context, Some(region), joinedCluster, settings)
       case (context, NodeMemberUp) if sharding.isDefined =>
-        context.log.info("Member has joined the cluster")
+        log.info("Member has joined the cluster")
         start(context, sharding.get, settings)
       case (_, NodeMemberUp) =>
-        context.log.info("Member has joined the cluster")
+        log.info("Member has joined the cluster")
         starting(context, sharding, joinedCluster = true, settings)
       case (_, BindingFailed(t)) =>
-        context.log.error("Binding has failed", t)
+        log.error("Binding has failed", t)
         Behaviors.stopped
 
   }
@@ -108,7 +108,7 @@ trait MainSupportDrones {
 
     import context.executionContext
 
-    context.log.info("Sharding started and joined the cluster. Starting Drone's Kafka Processor")
+    log.info("Sharding started and joined the cluster. Starting Drone's Kafka Processor")
 
     val droneKafkaProcessor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
     val grpcBinding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
@@ -117,7 +117,7 @@ trait MainSupportDrones {
       case Success(serverBinding) => {
 
         val address = serverBinding.localAddress
-        context.log.info("gRPC bound to {}:{}", address.getHostString, address.getPort)
+        log.info("gRPC successfully bound to {}:{}", address.getHostString, address.getPort)
 
       }
 
@@ -142,22 +142,22 @@ trait MainSupportDrones {
 
     import context.executionContext
 
-    context.log.info("The application is now in Running state")
+    log.info("The application is now in Running state")
 
     Behaviors.receiveMessagePartial[Command] {
 
       case BindingFailed(t) =>
-        context.log.error("Failed to bind the gRPC front end", t)
+        log.error("Failed to bind the gRPC front end", t)
 
         Behaviors.stopped
 
     }.receiveSignal {
 
       case (context, Terminated(`droneKafkaProcessor`)) =>
-        context.log.warn("Kafka event processor stopped. Shutting down")
+        log.warn("Kafka event processor stopped. Shutting down")
 
         grpcBinding.map(_.terminate(5.seconds).map { _ =>
-          context.log.info("gRPC binding graceful shutdown completed")
+          log.info("gRPC binding graceful shutdown completed")
           Done
         })
 
