@@ -34,13 +34,11 @@ libraryDependencies ++= {
   val AkkaManagementVersion = "1.1.3"
   val AkkaPersistenceCassandraVersion = "1.0.5"
   val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.2.2"
+  val JacksonVersionVersion = "2.13.3"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
     "com.typesafe.akka"             %% "akka-actor-typed"                       % AkkaVersion,
-
-    "com.typesafe.akka"             %% "akka-serialization-jackson"             % AkkaVersion,
 
     "com.typesafe.akka"             %% "akka-cluster-typed"                     % AkkaVersion,
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed"            % AkkaVersion,
@@ -55,6 +53,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"             %% "akka-stream-kafka-cluster-sharding"     % AkkaStreamKafkaVersion,
 
     "com.typesafe.akka"             %% "akka-http"                              % AkkaHttpVersion,
+    "com.typesafe.akka"             %% "akka-http-spray-json"                   % AkkaHttpVersion,
 
     "com.typesafe.akka"             %% "akka-cluster-tools"                     % AkkaVersion,
 
@@ -71,18 +70,10 @@ libraryDependencies ++= {
     "com.lightbend.akka.discovery"  %% "akka-discovery-kubernetes-api"          % AkkaManagementVersion,
     "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap"      % AkkaManagementVersion,
 
-    // parboiled2 – A Macro-Based PEG Parser Generator for Scala 2.12+
-    // https://github.com/sirthias/parboiled2
-    "org.parboiled"                 %% "parboiled"                              % "2.4.0",
-
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
     "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
-    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.0.1",
-
-    // MapDB
-    // https://github.com/jankotek/MapDB
-    "org.mapdb"                     % "mapdb"                                   % "3.0.8",
+    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.1.1",
 
     // Apache Lucene
     // https://lucene.apache.org/

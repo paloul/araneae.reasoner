@@ -7,7 +7,7 @@ import akka.cluster.sharding.external.ExternalShardAllocationStrategy
 import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity}
 import akka.kafka.cluster.sharding.KafkaClusterSharding
 import paloul.araneae.cluster.util.Settings
-import paloul.araneae.cluster.util.serializers.CborSerializable
+import paloul.araneae.cluster.util.serializers.ProtoSerializable
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -18,7 +18,7 @@ object Drone {
   // Drone Messages
 
   /** Base Message type for all incoming Drone messages */
-  sealed trait Command extends CborSerializable {
+  sealed trait Command extends ProtoSerializable {
     def droneId: String
   }
 
@@ -30,8 +30,8 @@ object Drone {
   final case class GetDroneLocation(droneId: String, replyTo: ActorRef[DroneLocation]) extends Command
 
   /** State */
-  final case class DroneState(health: Int, battery: Int) extends CborSerializable
-  final case class DroneLocation(lat: Int, lon: Int) extends CborSerializable
+  final case class DroneState(health: Int, battery: Int) extends ProtoSerializable
+  final case class DroneLocation(lat: Int, lon: Int) extends ProtoSerializable
   //************************************************************************************
 
   /**
