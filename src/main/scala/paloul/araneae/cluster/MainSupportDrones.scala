@@ -1,5 +1,7 @@
 package paloul.araneae.cluster
 
+import akka.Done
+import akka.actor.CoordinatedShutdown
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
@@ -14,6 +16,7 @@ import paloul.araneae.cluster.services.grpc.DroneGrpcService
 import paloul.araneae.cluster.util.Settings
 
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
 //************************************************************************************
@@ -111,9 +114,15 @@ trait MainSupportDrones {
     val grpcBinding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
 
     grpcBinding.onComplete {
+      case Success(serverBinding) => {
+
+        val address = serverBinding.localAddress
+        context.log.info("gRPC bound to {}:{}", address.getHostString, address.getPort)
+
+      }
+
       case Failure(t) =>
         context.self ! BindingFailed(t)
-      case _ =>
     }
 
     running(context, grpcBinding, droneKafkaProcessor)
@@ -129,11 +138,16 @@ trait MainSupportDrones {
    */
   private def running(context: ActorContext[Command],
                       grpcBinding: Future[Http.ServerBinding],
-                      droneKafkaProcessor: ActorRef[Nothing]): Behavior[Command] =
+                      droneKafkaProcessor: ActorRef[Nothing]): Behavior[Command] = {
+
+    import context.executionContext
+
+    context.log.info("The application is now in Running state")
+
     Behaviors.receiveMessagePartial[Command] {
 
       case BindingFailed(t) =>
-        context.log.error("Failed to bind the grpc front end", t)
+        context.log.error("Failed to bind the gRPC front end", t)
 
         Behaviors.stopped
 
@@ -142,9 +156,14 @@ trait MainSupportDrones {
       case (context, Terminated(`droneKafkaProcessor`)) =>
         context.log.warn("Kafka event processor stopped. Shutting down")
 
-        grpcBinding.map(_.unbind())(context.executionContext)
+        grpcBinding.map(_.terminate(5.seconds).map { _ =>
+          context.log.info("gRPC binding graceful shutdown completed")
+          Done
+        })
+
         Behaviors.stopped
     }
+  }
 
   /**
    *
