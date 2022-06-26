@@ -19,6 +19,7 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings",  // New lines for each options
   "-deprecation",
   "-unchecked",
+  "-Ymacro-annotations",
   "-language:implicitConversions",
   "-language:higherKinds",
   "-language:existentials",
@@ -28,6 +29,7 @@ scalacOptions ++= Seq(
 enablePlugins(AkkaGrpcPlugin)
 
 libraryDependencies ++= {
+  val CirceVersion = "0.14.2"
   val AkkaVersion = "2.6.19"
   val AkkaHttpVersion = "10.2.9"
   val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
@@ -73,12 +75,23 @@ libraryDependencies ++= {
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
     "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
-    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.1.1",
+    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.2",
 
     // Apache Lucene
     // https://lucene.apache.org/
     // https://search.maven.org/artifact/org.apache.lucene/lucene-core
-    "org.apache.lucene"             % "lucene-core"                             % "9.1.0"
+    "org.apache.lucene"             % "lucene-core"                             % "9.2.0",
+
+    // Circe - JSON Library for Scala powered by CATS
+    // https://circe.github.io/circe/
+    // https://github.com/circe/circe
+    "io.circe"                      %% "circe-core"                             % CirceVersion,
+    "io.circe"                      %% "circe-generic"                          % CirceVersion,
+    "io.circe"                      %% "circe-parser"                           % CirceVersion,
+
+    // Cats Effect
+    // https://typelevel.org/cats-effect/
+    "org.typelevel"                 %% "cats-effect"                            % "3.3.12"
 
   )
 }
