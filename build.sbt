@@ -49,11 +49,6 @@ libraryDependencies ++= {
     "com.typesafe.akka"             %% "akka-cluster-typed"                     % AkkaVersion,
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed"            % AkkaVersion,
 
-    "com.typesafe.akka"             %% "akka-persistence"                       % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-typed"                 % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-query"                 % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-cassandra"             % AkkaPersistenceCassandraVersion,
-
     "com.typesafe.akka"             %% "akka-stream"                            % AkkaVersion,
     "com.typesafe.akka"             %% "akka-stream-kafka"                      % AkkaStreamKafkaVersion,
     "com.typesafe.akka"             %% "akka-stream-kafka-cluster-sharding"     % AkkaStreamKafkaVersion,
