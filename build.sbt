@@ -26,7 +26,11 @@ scalacOptions ++= Seq(
   "-language:postfixOps"
 )
 
+// Enable Plugins
+enablePlugins(DockerPlugin)
 enablePlugins(AkkaGrpcPlugin)
+enablePlugins(JavaAppPackaging)
+enablePlugins(GraalVMNativeImagePlugin)
 
 libraryDependencies ++= {
   val CirceVersion = "0.14.2"
@@ -96,15 +100,26 @@ libraryDependencies ++= {
   )
 }
 
-// Enable the Docker Plugin and define settings
-enablePlugins(DockerPlugin)
+assembly / assemblyMergeStrategy  := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case x => MergeStrategy.first
+}
+
+// Define GraalVM Native Image Options
+graalVMNativeImageOptions ++= Seq(
+  "-H:ResourceConfigurationFiles=../../configs/resource-config.json",
+  "-H:ReflectionConfigurationFiles=../../configs/reflect-config.json",
+  "-H:JNIConfigurationFiles=../../configs/jni-config.json",
+  "-H:DynamicProxyConfigurationFiles=../../configs/proxy-config.json"
+)
+
+// Define Docker Plugin settings
 Docker / packageName := name.value
 Docker / version := version.value
 dockerBaseImage := "openjdk:11-jre-slim-bullseye"
 dockerExposedPorts := Seq(5000, 2550, 8558)
-
-// Add custom Docker Cmds to the Dockerfile
-dockerCommands ++= Seq(
+dockerCommands ++= Seq( // Add custom Docker commands to the Dockerfile
   Cmd("USER", "root"), // Switch to root to allow apt-get upgrade command
   ExecCmd("RUN", "apt-get", "update"),
   ExecCmd("RUN", "apt-get", "upgrade", "-y"),
