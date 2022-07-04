@@ -2,7 +2,7 @@ package paloul.araneae.cluster
 
 import akka.Done
 import akka.actor.CoordinatedShutdown
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior, PostStop, Terminated}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
 import akka.http.scaladsl.Http
@@ -11,7 +11,6 @@ import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
 import org.slf4j.{Logger, LoggerFactory}
 import paloul.araneae.cluster.actors.Drone
-import paloul.araneae.cluster.processors.DroneKafkaProcessor
 import paloul.araneae.cluster.protobuf.DroneServiceHandler
 import paloul.araneae.cluster.services.grpc.DroneGrpcService
 import paloul.araneae.cluster.util.{LoggerEnabled, Settings}
@@ -111,24 +110,33 @@ trait MainSupportInit {
 
     import context.executionContext
 
-    log.info("Sharding started and joined the cluster. Starting Drone's Kafka Processor")
+    log.info("Sharding started and joined the cluster")
 
-    val droneKafkaProcessor = context.spawn[Nothing](DroneKafkaProcessor(region, settings), name="drone-kafka-processor")
+    // Call startGrpc to initiate binding of underlying http service and connect grpc services
     val grpcBinding: Future[Http.ServerBinding] = startGrpc(context.system, region, settings)
 
     grpcBinding.onComplete {
-      case Success(serverBinding) => {
+      case Success(serverBinding) =>
 
         val address = serverBinding.localAddress
         log.info("gRPC successfully bound to {}:{}", address.getHostString, address.getPort)
 
-      }
+        // After successful bound of service, add task to coordinated shutdown to safely
+        // terminate the grpc/http bindings
+        CoordinatedShutdown(context.system.classicSystem).addTask(
+          CoordinatedShutdown.PhaseServiceRequestsDone, "grpc-graceful-terminate") { () =>
+            serverBinding.terminate(5.seconds).map { _ =>
+              log.info("gRPC binding graceful shutdown completed")
+              Done
+            }
+        }
 
       case Failure(t) =>
         context.self ! BindingFailed(t)
     }
 
-    running(context, grpcBinding, droneKafkaProcessor)
+    // Change to running behavior
+    running(context, grpcBinding)
 
   }
 
@@ -140,8 +148,7 @@ trait MainSupportInit {
    * @return A Behavior of type Command to handle running state, waiting for termination signal
    */
   private def running(context: ActorContext[Command],
-                      grpcBinding: Future[Http.ServerBinding],
-                      droneKafkaProcessor: ActorRef[Nothing]): Behavior[Command] = {
+                      grpcBinding: Future[Http.ServerBinding]): Behavior[Command] = {
 
     import context.executionContext
 
@@ -156,15 +163,12 @@ trait MainSupportInit {
 
     }.receiveSignal {
 
-      case (context, Terminated(`droneKafkaProcessor`)) =>
-        log.warn("Kafka event processor stopped. Shutting down")
+      case (context, PostStop) =>
+        log.info("Root level behavior shutdown")
 
-        grpcBinding.map(_.terminate(5.seconds).map { _ =>
-          log.info("gRPC binding graceful shutdown completed")
-          Done
-        })
+        // Implement any extra shut down behavior here
 
-        Behaviors.stopped
+        Behaviors.same
     }
   }
 
