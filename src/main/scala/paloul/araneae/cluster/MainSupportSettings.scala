@@ -7,9 +7,9 @@ import paloul.araneae.cluster.util.Settings
 /**
  * Supporting the Main class with added Settings features
  */
-trait MainSettingsSupport {
+trait MainSupportSettings {
 
-  private val log: Logger = LoggerFactory.getLogger("MainSettingsSupport")
+  private val log: Logger = LoggerFactory.getLogger("MainSupportSettings")
 
   /**
    * Based on Environment Variables defined in app.conf and loaded via Settings, dynamically

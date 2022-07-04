@@ -9,6 +9,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
+import org.slf4j.{Logger, LoggerFactory}
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.processors.DroneKafkaProcessor
 import paloul.araneae.cluster.protobuf.DroneServiceHandler
@@ -30,13 +31,15 @@ final case class BindingFailed(reason: Throwable) extends Command
 /**
  * Supporting the Main class with added root Service behaviors
  */
-trait MainSupportDrones extends LoggerEnabled {
+trait MainSupportInit {
+
+  private val log: Logger = LoggerFactory.getLogger("MainSupportInit")
 
   /**
    * Initialize the Actor System and setup root behaviors using ServicesSupport trait
    * @param settings Settings loaded with values from application.conf
    */
-  def initDrones(settings: Settings): Unit = {
+  def initialize(settings: Settings): Unit = {
     ActorSystem(
       Behaviors.setup[Command] { context =>
         // If Deploy to Cloud is defined true,

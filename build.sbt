@@ -36,11 +36,7 @@ libraryDependencies ++= {
   val CirceVersion = "0.14.2"
   val AkkaVersion = "2.6.19"
   val AkkaHttpVersion = "10.2.9"
-  val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
   val AkkaManagementVersion = "1.1.3"
-  val AkkaPersistenceCassandraVersion = "1.0.5"
-  val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.3"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -49,20 +45,10 @@ libraryDependencies ++= {
     "com.typesafe.akka"             %% "akka-cluster-typed"                     % AkkaVersion,
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed"            % AkkaVersion,
 
-    "com.typesafe.akka"             %% "akka-stream"                            % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-stream-kafka"                      % AkkaStreamKafkaVersion,
-    "com.typesafe.akka"             %% "akka-stream-kafka-cluster-sharding"     % AkkaStreamKafkaVersion,
-
     "com.typesafe.akka"             %% "akka-http"                              % AkkaHttpVersion,
     "com.typesafe.akka"             %% "akka-http-spray-json"                   % AkkaHttpVersion,
 
     "com.typesafe.akka"             %% "akka-cluster-tools"                     % AkkaVersion,
-
-    // Alpakka libraries
-    // https://doc.akka.io/docs/alpakka/current/cassandra.html
-    "com.lightbend.akka"            %% "akka-stream-alpakka-cassandra"          % AlpakkaCassandraVersion,
-    // Jackson databind required for Kafka Connector
-    "com.fasterxml.jackson.core"    % "jackson-databind"                        % JacksonVersionVersion,
 
     // Discovery for cloud deployment auto discovery capabilities
     // https://doc.akka.io/docs/akka-management/current/discovery/index.html
