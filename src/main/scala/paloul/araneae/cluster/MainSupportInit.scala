@@ -53,7 +53,7 @@ trait MainSupportInit {
         cluster.subscriptions ! Subscribe(upAdapter, classOf[SelfUp])
 
         context.pipeToSelf(Drone.shardingInit(context.system, settings)) {
-          case Success(extractor) => ShardingStarted(extractor)
+          case Success(region) => ShardingStarted(region)
           case Failure(ex) => throw ex
         }
 
