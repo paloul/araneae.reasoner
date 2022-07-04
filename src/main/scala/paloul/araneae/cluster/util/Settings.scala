@@ -1,10 +1,7 @@
 package paloul.araneae.cluster.util
 
 import akka.actor._
-import akka.actor.typed.ActorSystem
 import com.typesafe.config.Config
-import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
 /**
  * This companion object here should not be touched, its basic infrastructure support
@@ -40,7 +37,6 @@ object Settings extends ExtensionId[Settings] with ExtensionIdProvider {
 class Settings(val config: Config) extends Extension {
 
   import scala.concurrent.duration._
-  import scala.jdk.CollectionConverters._
 
   def this(system: ExtendedActorSystem) = this(system.settings.config)
 
@@ -61,44 +57,12 @@ class Settings(val config: Config) extends Extension {
     val cloudDeploy: Boolean = config.getBoolean("application.cloud-deploy")
   }
 
-  object kafka_processor {
-    import akka.kafka.ConsumerSettings
-    import akka.cluster.sharding.typed.scaladsl.EntityTypeKey
-
-    object drone {
-      import paloul.araneae.cluster.actors.Drone
-
-      val servers: String = config.getString("application.kafka-processor.drone.servers")
-      val topics: List[String] = config.getStringList("application.kafka-processor.drone.topics").asScala.toList
-      val group: String = config.getString("application.kafka-processor.drone.group")
-
-      /**
-       * Using the same consumer group id for the cluster sharding entity type key name, we can setup
-       * multiple consumer groups and connect with a different sharded entity coordinator for each.
-       */
-      val entityTypeKey: EntityTypeKey[Drone.Command] = EntityTypeKey(group)
+  object akka {
+    object cluster {
+      object sharding {
+        val numberOfShards: Int = config.getInt("akka.cluster.sharding.number-of-shards")
+      }
     }
-
-    /**
-     * Given the parameters, returns a Kafka Consumer Setting
-     * @param system
-     * @param servers
-     * @param groupId
-     * @return
-     */
-    def kafkaConsumerSettings(system: ActorSystem[_],
-                              servers: String,
-                              groupId: String,
-                              ): ConsumerSettings[String, Array[Byte]] = {
-
-      ConsumerSettings(system, new StringDeserializer, new ByteArrayDeserializer)
-          .withBootstrapServers(servers)
-          .withGroupId(groupId)
-          .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-          .withStopTimeout(0.seconds)
-    }
-
-    // You can add settings for more specialized data producers as well, i.e. cameras, drones, cars.  
   }
 
   // ******************************************************************************
