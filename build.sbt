@@ -33,7 +33,6 @@ enablePlugins(JavaAppPackaging)
 enablePlugins(GraalVMNativeImagePlugin)
 
 libraryDependencies ++= {
-  val CirceVersion = "0.14.2"
   val AkkaVersion = "2.6.19"
   val AkkaHttpVersion = "10.2.9"
   val AkkaManagementVersion = "1.1.3"
@@ -66,13 +65,6 @@ libraryDependencies ++= {
     // https://lucene.apache.org/
     // https://search.maven.org/artifact/org.apache.lucene/lucene-core
     "org.apache.lucene"             % "lucene-core"                             % "9.2.0",
-
-    // Circe - JSON Library for Scala powered by CATS
-    // https://circe.github.io/circe/
-    // https://github.com/circe/circe
-    "io.circe"                      %% "circe-core"                             % CirceVersion,
-    "io.circe"                      %% "circe-generic"                          % CirceVersion,
-    "io.circe"                      %% "circe-parser"                           % CirceVersion,
 
     // Cats Effect
     // https://typelevel.org/cats-effect/
