@@ -3,8 +3,7 @@ package paloul.araneae.cluster.actors
 import akka.Done
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import akka.cluster.sharding.typed.{HashCodeNoEnvelopeMessageExtractor, ShardingEnvelope, ShardingMessageExtractor}
-import akka.cluster.sharding.external.ExternalShardAllocationStrategy
+import akka.cluster.sharding.typed.ShardingMessageExtractor
 import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
 import paloul.araneae.cluster.util.Settings
 import paloul.araneae.cluster.util.serializers.ProtoSerializable
@@ -34,8 +33,8 @@ object Drone {
   final case class GetDroneLocation(droneId: String, replyTo: ActorRef[DroneLocation]) extends Command
 
   /** State */
-  final case class DroneState(health: Int, battery: Int) extends ProtoSerializable
-  final case class DroneLocation(lat: Int, lon: Int) extends ProtoSerializable
+  final case class DroneState(health: Int, battery: Int)
+  final case class DroneLocation(lat: Int, lon: Int)
   //************************************************************************************
 
   // The typekey used in sharding to route to unique instances
@@ -53,7 +52,7 @@ object Drone {
         new Drone(id, context, timers)
           .inactive(
             DroneState(100,100),
-            DroneLocation(0,0)
+            DroneLocation(110,101)
           )
       }
     }
@@ -65,7 +64,9 @@ object Drone {
    * @param settings Reference to Settings for access to configuration env variables
    * @return An Akka Cluster Shard Manager actor reference able to receive Drone.Command messages
    */
-  def shardingInit(system: ActorSystem[_], settings: Settings): ActorRef[Command] = {
+  def shardingInit(system: ActorSystem[_], settings: Settings): Future[ActorRef[Command]] = {
+
+    import scala.concurrent.ExecutionContext.Implicits.global
 
     // Initialize the shard
     system.log.info("Initializing sharding for Drones...")
@@ -79,10 +80,12 @@ object Drone {
 
     // Create and initialize the Cluster Sharding behavior to create a Drone instance controlled by Shard Manager
     // Establish an external shard allocation strategy that uses the message extractor created above
-    ClusterSharding(system).init(
-      Entity(TypeKey)(createBehavior = entityContext => Drone(entityContext.entityId))
-        .withMessageExtractor(noEnvelopeMessageExtractor)
-    )
+    Future {
+      ClusterSharding(system).init(
+        Entity(TypeKey)(createBehavior = entityContext => Drone(entityContext.entityId))
+          .withMessageExtractor(noEnvelopeMessageExtractor)
+      )
+    }
   }
 }
 
@@ -104,11 +107,11 @@ class Drone private (id: String,
   private def inactive(droneState: DroneState, droneLocation: DroneLocation): Behavior[Command] =
     Behaviors.receiveMessage {
       case GetDroneState(droneId, replyTo) =>
-        context.log.info("Requesting state for Drone[{}]", droneId)
+        context.log.info("Requested state for Drone[{}]", droneId)
         replyTo ! droneState
         Behaviors.same
       case GetDroneLocation(droneId, replyTo) =>
-        context.log.info("Requesting location for Drone[{}]", droneId)
+        context.log.info("Requested location for Drone[{}]", droneId)
         replyTo ! droneLocation
         Behaviors.same
       case _ =>

@@ -7,4 +7,4 @@ package paloul.araneae.cluster.util.serializers
  *
  * Use for internal messages. External message via gRPC/Kafka use protobuf
  */
-trait ProtoSerializable
+trait ProtoSerializable extends akka.actor.NoSerializationVerificationNeeded

@@ -121,16 +121,6 @@ trait MainSupportInit {
         val address = serverBinding.localAddress
         log.info("gRPC successfully bound to {}:{}", address.getHostString, address.getPort)
 
-        // After successful bound of service, add task to coordinated shutdown to safely
-        // terminate the grpc/http bindings
-        CoordinatedShutdown(context.system.classicSystem).addTask(
-          CoordinatedShutdown.PhaseServiceRequestsDone, "grpc-graceful-terminate") { () =>
-            serverBinding.terminate(5.seconds).map { _ =>
-              log.info("gRPC binding graceful shutdown completed")
-              Done
-            }
-        }
-
       case Failure(t) =>
         context.self ! BindingFailed(t)
     }
@@ -144,13 +134,10 @@ trait MainSupportInit {
    *
    * @param context Reference to Actor Context
    * @param grpcBinding Reference to the GRPC ServerBinding Future
-   * @param droneKafkaProcessor Reference to the behavior running from DroneKafkaProcessor
    * @return A Behavior of type Command to handle running state, waiting for termination signal
    */
   private def running(context: ActorContext[Command],
                       grpcBinding: Future[Http.ServerBinding]): Behavior[Command] = {
-
-    import context.executionContext
 
     log.info("The application is now in Running state")
 
@@ -166,8 +153,9 @@ trait MainSupportInit {
       case (context, PostStop) =>
         log.info("Root level behavior shutdown")
 
-        // Implement any extra shut down behavior here
+        grpcBinding.map(_.unbind())(context.executionContext)
 
+        // Return Behaviors.same because PostStop already means stopped behavior
         Behaviors.same
     }
   }

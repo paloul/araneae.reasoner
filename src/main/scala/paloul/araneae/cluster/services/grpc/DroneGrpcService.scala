@@ -5,7 +5,7 @@ import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
 import akka.util.Timeout
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.util.Settings
-import paloul.araneae.cluster.protobuf.{DroneService, DroneStateRequest, DroneStateResponse}
+import paloul.araneae.cluster.protobuf.{DroneLocation, DroneLocationRequest, DroneService, DroneState, DroneStateRequest}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -26,9 +26,20 @@ class DroneGrpcService(system: ActorSystem[_], shardRegion: ActorRef[Drone.Comma
    * @param in The protobuf message for requesting drone state
    * @return A future encapsulating a DroneStateResponse message
    */
-  override def droneState(in: DroneStateRequest): Future[DroneStateResponse] = {
+  override def getDroneState(in: DroneStateRequest): Future[DroneState] = {
     shardRegion
       .ask[Drone.DroneState](replyTo => Drone.GetDroneState(in.id, replyTo))
-      .map(droneState => DroneStateResponse(in.id, health = droneState.health, battery = droneState.battery))
+      .map(droneState => DroneState(in.id, health = droneState.health, battery = droneState.battery))
+  }
+
+  /**
+   * Implementation of the DroneState GRPC Service in protobuf file Drones.proto
+   * @param in The protobuf message for requesting drone state
+   * @return A future encapsulating a DroneStateResponse message
+   */
+  override def getDroneLocation(in: DroneLocationRequest): Future[DroneLocation] = {
+    shardRegion
+      .ask[Drone.DroneLocation](replyTo => Drone.GetDroneLocation(in.id, replyTo))
+      .map(droneLocation => DroneLocation(in.id, lat = droneLocation.lat, lon = droneLocation.lon))
   }
 }
