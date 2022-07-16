@@ -1,8 +1,6 @@
 package paloul.araneae.cluster
 
-import akka.Done
-import akka.actor.CoordinatedShutdown
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior, PostStop, Terminated}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior, PostStop}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.cluster.typed.{Cluster, SelfUp, Subscribe}
 import akka.http.scaladsl.Http
@@ -13,10 +11,9 @@ import org.slf4j.{Logger, LoggerFactory}
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.protobuf.DroneServiceHandler
 import paloul.araneae.cluster.services.grpc.DroneGrpcService
-import paloul.araneae.cluster.util.{LoggerEnabled, Settings}
+import paloul.araneae.cluster.util.Settings
 
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
 //************************************************************************************
