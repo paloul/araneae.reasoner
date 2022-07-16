@@ -5,8 +5,8 @@ option java_package = "paloul.araneae.cluster.protobuf";
 option java_outer_classname = "DronesProto";
 
 service DroneService {
-  rpc  GetDroneState (DroneStateRequest) returns (DroneState) {}
-  rpc  GetDroneLocation (DroneLocationRequest) returns (DroneLocation) {}
+  rpc  GetDroneState (stream DroneStateRequest) returns (stream DroneState) {}
+  rpc  GetDroneLocation (stream DroneLocationRequest) returns (stream DroneLocation) {}
 }
 
 message DroneState {
