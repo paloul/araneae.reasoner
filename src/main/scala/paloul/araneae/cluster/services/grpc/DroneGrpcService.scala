@@ -29,7 +29,7 @@ class DroneGrpcService(system: ActorSystem[_], shardRegion: ActorRef[Drone.Comma
   override def getDroneState(in: DroneStateRequest): Future[DroneState] = {
     shardRegion
       .ask[Drone.DroneState](replyTo => Drone.GetDroneState(in.id, replyTo))
-      .map(droneState => DroneState(in.id, health = droneState.health, battery = droneState.battery))
+      .map(droneState => DroneState(health = droneState.health, battery = droneState.battery))
   }
 
   /**
@@ -40,6 +40,6 @@ class DroneGrpcService(system: ActorSystem[_], shardRegion: ActorRef[Drone.Comma
   override def getDroneLocation(in: DroneLocationRequest): Future[DroneLocation] = {
     shardRegion
       .ask[Drone.DroneLocation](replyTo => Drone.GetDroneLocation(in.id, replyTo))
-      .map(droneLocation => DroneLocation(in.id, lat = droneLocation.lat, lon = droneLocation.lon))
+      .map(droneLocation => DroneLocation(lat = droneLocation.lat, lon = droneLocation.lon))
   }
 }
