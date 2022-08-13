@@ -30,7 +30,6 @@ scalacOptions ++= Seq(
 enablePlugins(DockerPlugin)
 enablePlugins(AkkaGrpcPlugin)
 enablePlugins(JavaAppPackaging)
-enablePlugins(GraalVMNativeImagePlugin)
 
 libraryDependencies ++= {
   val AkkaVersion = "2.6.19"
@@ -79,14 +78,6 @@ assembly / assemblyMergeStrategy  := {
   case PathList("reference.conf") => MergeStrategy.concat
   case x => MergeStrategy.first
 }
-
-// Define GraalVM Native Image Options
-graalVMNativeImageOptions ++= Seq(
-  "-H:ResourceConfigurationFiles=../../configs/resource-config.json",
-  "-H:ReflectionConfigurationFiles=../../configs/reflect-config.json",
-  "-H:JNIConfigurationFiles=../../configs/jni-config.json",
-  "-H:DynamicProxyConfigurationFiles=../../configs/proxy-config.json"
-)
 
 // Define Docker Plugin settings
 Docker / packageName := name.value
