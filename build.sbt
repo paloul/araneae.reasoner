@@ -80,8 +80,7 @@ dockerBaseImage := "eclipse-temurin:17.0.4_8-jre-alpine"
 dockerExposedPorts := Seq(5000, 2550, 8558)
 dockerCommands ++= Seq( // Add custom Docker commands to the Dockerfile
   Cmd("USER", "root"), // Switch to root to allow apt-get upgrade command
-  ExecCmd("RUN", "apt-get", "update"),
-  ExecCmd("RUN", "apt-get", "upgrade", "-y"),
-  ExecCmd("RUN", "apt-get", "dist-upgrade", "-y"),
+  ExecCmd("RUN", "apk", "update"),
+  ExecCmd("RUN", "apk", "upgrade", "--latest"),
   Cmd("USER", (Docker / daemonUser).value) // Switch back to default user from root
 )
