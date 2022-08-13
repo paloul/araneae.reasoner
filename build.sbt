@@ -73,16 +73,10 @@ libraryDependencies ++= {
   )
 }
 
-assembly / assemblyMergeStrategy  := {
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-  case PathList("reference.conf") => MergeStrategy.concat
-  case x => MergeStrategy.first
-}
-
 // Define Docker Plugin settings
 Docker / packageName := name.value
 Docker / version := version.value
-dockerBaseImage := "openjdk:11-jre-slim-bullseye"
+dockerBaseImage := "eclipse-temurin:17.0.4_8-jre-alpine"
 dockerExposedPorts := Seq(5000, 2550, 8558)
 dockerCommands ++= Seq( // Add custom Docker commands to the Dockerfile
   Cmd("USER", "root"), // Switch to root to allow apt-get upgrade command
