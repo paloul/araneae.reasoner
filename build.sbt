@@ -64,11 +64,12 @@ libraryDependencies ++= {
     // Apache Lucene
     // https://lucene.apache.org/
     // https://search.maven.org/artifact/org.apache.lucene/lucene-core
-    "org.apache.lucene"             % "lucene-core"                             % "9.2.0",
+    "org.apache.lucene"             % "lucene-core"                             % "9.3.0",
 
-    // Cats Effect
-    // https://typelevel.org/cats-effect/
-    "org.typelevel"                 %% "cats-effect"                            % "3.3.12"
+    // MapDB
+    // https://mapdb.org/
+    // https://github.com/jankotek/mapdb/
+    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
 
   )
 }
