@@ -38,6 +38,7 @@ trait UUID {
 
     val bytes = new Array[Byte](16)
     for (i <- 0 until 16) {
+      // Moving up by 2's because 2 hex characters are captured from string
       val b = hexToByte(normalizedUUIDHexString.substring(i * 2, i * 2 + 2))
       bytes(i) = b
     }

@@ -3,9 +3,8 @@ package paloul.araneae.cluster.actors
 import akka.Done
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import akka.cluster.sharding.external.ExternalShardAllocationStrategy
-import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity}
-import akka.kafka.cluster.sharding.KafkaClusterSharding
+import akka.cluster.sharding.typed.ShardingMessageExtractor
+import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
 import paloul.araneae.cluster.util.Settings
 import paloul.araneae.cluster.util.serializers.ProtoSerializable
 
@@ -23,6 +22,10 @@ object Drone {
   }
 
   /** Commands */
+  // The Stop command doesnt need a unique id. The message is sent locally within jvm from
+  // Shard Manager on same node to Drone instance on same node by direct actor reference.
+  final case class Stop(droneId: String = "Stop") extends Command
+
   final case class SetDroneState(droneId: String, health: Int, battery: Int, replyTo: ActorRef[Done]) extends Command
   final case class GetDroneState(droneId: String, replyTo: ActorRef[DroneState]) extends Command
 
@@ -30,9 +33,12 @@ object Drone {
   final case class GetDroneLocation(droneId: String, replyTo: ActorRef[DroneLocation]) extends Command
 
   /** State */
-  final case class DroneState(health: Int, battery: Int) extends ProtoSerializable
-  final case class DroneLocation(lat: Int, lon: Int) extends ProtoSerializable
+  final case class DroneState(health: Int, battery: Int)
+  final case class DroneLocation(lat: Int, lon: Int)
   //************************************************************************************
+
+  // The typekey used in sharding to route to unique instances
+  val TypeKey: EntityTypeKey[Drone.Command] = EntityTypeKey[Drone.Command]("Drone")
 
   /**
    * Instantiates a new Drone given the id. Only accessible from companion object
@@ -46,7 +52,7 @@ object Drone {
         new Drone(id, context, timers)
           .inactive(
             DroneState(100,100),
-            DroneLocation(0,0)
+            DroneLocation(110,101)
           )
       }
     }
@@ -59,31 +65,27 @@ object Drone {
    * @return An Akka Cluster Shard Manager actor reference able to receive Drone.Command messages
    */
   def shardingInit(system: ActorSystem[_], settings: Settings): Future[ActorRef[Command]] = {
-    import system.executionContext
 
-    // Create the Kafka Message Extractor for sharded kafka clustering
-    system.log.info("Creating Kafka Message Extractor...")
-    KafkaClusterSharding(system).messageExtractorNoEnvelope(
-      timeout = FiniteDuration(settings.application.akkaAskTimeout.length, settings.application.akkaAskTimeout.unit),
-      // The head topic in topics is used merely to query Kafka cluster and retrieve number of partitions.
-      // The number of partitions is used to create the underlying KafkaShardingNoEnvelopeExtractor
-      // Important Note: Ensure all topics in the list are configured with equal partitions on the Kafka cluster
-      topic = settings.kafka_processor.drone.topics.head,
-      // The entity id is the drone id inside the message for target recipient
-      entityIdExtractor = (msg: Command) => msg.droneId,
-      settings = settings.kafka_processor.kafkaConsumerSettings(
-        system, settings.kafka_processor.drone.servers, settings.kafka_processor.drone.group)
-    ).map(messageExtractor => {
-      system.log.info("Kafka Message Extractor created. Initializing sharding for Drones...")
+    import scala.concurrent.ExecutionContext.Implicits.global
 
-      // Create and initialize the Cluster Sharding behavior to create a Drone instance controlled by Shard Manager
-      // Establish an external shard allocation strategy that uses the message extractor created above
+    // Initialize the shard
+    system.log.info("Initializing sharding for Drones...")
+
+    // Create a new Message Extractor without Enveloping. This removes the need to
+    // wrap messages with the so-called Shard
+    val noEnvelopeMessageExtractor = ShardingMessageExtractor.noEnvelope[Command](
+      numberOfShards = settings.akka.cluster.sharding.numberOfShards,
+      stopMessage = Stop()
+    ) (extractEntityId = (msg: Command) => msg.droneId)
+
+    // Create and initialize the Cluster Sharding behavior to create a Drone instance controlled by Shard Manager
+    // Establish an external shard allocation strategy that uses the message extractor created above
+    Future {
       ClusterSharding(system).init(
-        Entity(settings.kafka_processor.drone.entityTypeKey)(createBehavior = entityContext => Drone(entityContext.entityId))
-          .withAllocationStrategy(new ExternalShardAllocationStrategy(system, settings.kafka_processor.drone.entityTypeKey.name))
-          .withMessageExtractor(messageExtractor)
+        Entity(TypeKey)(createBehavior = entityContext => Drone(entityContext.entityId))
+          .withMessageExtractor(noEnvelopeMessageExtractor)
       )
-    })
+    }
   }
 }
 
@@ -105,11 +107,11 @@ class Drone private (id: String,
   private def inactive(droneState: DroneState, droneLocation: DroneLocation): Behavior[Command] =
     Behaviors.receiveMessage {
       case GetDroneState(droneId, replyTo) =>
-        context.log.info("Requesting state for Drone[{}]", droneId)
+        context.log.info("Requested state for Drone[{}]", droneId)
         replyTo ! droneState
         Behaviors.same
       case GetDroneLocation(droneId, replyTo) =>
-        context.log.info("Requesting location for Drone[{}]", droneId)
+        context.log.info("Requested location for Drone[{}]", droneId)
         replyTo ! droneLocation
         Behaviors.same
       case _ =>

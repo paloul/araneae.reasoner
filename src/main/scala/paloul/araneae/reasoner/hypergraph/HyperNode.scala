@@ -1,40 +1,77 @@
 package paloul.araneae.reasoner.hypergraph
 
+import paloul.araneae.reasoner.hypergraph.atom.Atom
 import paloul.araneae.reasoner.hypergraph.atom.util.HgIncidenceSet
 import paloul.araneae.reasoner.hypergraph.handle.HgHandle
 import paloul.araneae.reasoner.hypergraph.query.HgQueryCondition
 
 /**
  * <p>Abstracts the core interface to HyperGraphs for manipulating data in the model. Implementations
- * can model abstractions such as remote database instance, sub-graphs, or other hypernode.</p>
+ * can model abstractions such as remote database instance, sub-graphs, or other hypernodes.</p>
  */
 trait HyperNode {
 
+  /**
+   * Count number of atoms with the given atom type
+   * @param atomType The type or label of atoms
+   * @return
+   */
+  def count(atomType: String): Long
+
+  /**
+   * Count the number of atoms given the query
+   * @param condition The Query Condition searching for atoms
+   * @return
+   */
   def count(condition: HgQueryCondition): Long
 
-  def get[A](handle: HgHandle): A
-  def getOne[A](condition: HgQueryCondition): A
-  def getAll[A](condition: HgQueryCondition): List[A]
+  /**
+   * Get the Atom and its properties given its handle
+   * @param handle The handle to specific atom
+   * @return
+   */
+  def get(handle: HgHandle): Atom
 
-  def find[A](condition: HgQueryCondition): List[A]
-  def findOne[A](condition: HgQueryCondition): A
-  def findAll[A](condition: HgQueryCondition): List[A]
+  /**
+   * Get all possible Atoms given the query condition
+   * @param condition The query condition searching for atoms
+   * @return
+   */
+  def get(condition: HgQueryCondition): List[Atom]
 
-  def remove(handle: HgHandle): Boolean
+  /**
+   * Get the Atom type of the given atom handle
+   * @param handle The handle to specific atom
+   * @return
+   */
+  def getAtomType(handle: HgHandle): String
 
-  def replace[A](atomHandle: HgHandle, atomObject: A, atomTypeHandle: HgHandle): Boolean
-
-  def getAtomType(handle: HgHandle): HgHandle
-
+  /**
+   * Get Incidence Set which is a collection of atoms pointing to a particular atom
+   * @param hgHandle The handle of a particular atom
+   * @return
+   */
   def getIncidenceSet(hgHandle: HgHandle): HgIncidenceSet
 
-  def add[A](atomObject: A, atomTypeHandle: HgHandle, flags: Int): HgHandle
-  def add[A](atomObject: A, atomTypeHandle: HgHandle): HgHandle = {
-    add[A](atomObject, atomTypeHandle, 0)
-  }
+  /**
+   * Remove the atom from the graph
+   * @param handle The handle to specific atom
+   * @return
+   */
+  def remove(handle: HgHandle): Some[Atom]
 
-  def define[A](atomHandle: HgHandle, atomTypeHandle: HgHandle, atomObject: A, flags: Int): Boolean
-  def define[A](atomHandle: HgHandle, atomTypeHandle: HgHandle, atomObject: A): Boolean = {
-    define[A](atomHandle, atomTypeHandle, atomObject, 0)
-  }
+  /**
+   * Add the atom to the graph
+   * @param atom The Atom
+   * @return
+   */
+  def add(atom: Atom): HgHandle
+
+  /**
+   * Add the atom to the graph
+   * @param atom The Atom
+   * @param atomType A String representing the type of the provided Atom
+   * @return
+   */
+  def add(atom: Atom, atomType: String): HgHandle
 }

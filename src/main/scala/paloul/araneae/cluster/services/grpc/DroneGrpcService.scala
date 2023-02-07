@@ -1,11 +1,13 @@
 package paloul.araneae.cluster.services.grpc
 
+import akka.NotUsed
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
+import akka.stream.scaladsl.{Sink, Source}
 import akka.util.Timeout
 import paloul.araneae.cluster.actors.Drone
 import paloul.araneae.cluster.util.Settings
-import paloul.araneae.cluster.protobuf.{DroneService, DroneStateRequest, DroneStateResponse}
+import paloul.araneae.cluster.protobuf.{DroneLocation, DroneLocationRequest, DroneService, DroneState, DroneStateRequest}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -23,12 +25,31 @@ class DroneGrpcService(system: ActorSystem[_], shardRegion: ActorRef[Drone.Comma
 
   /**
    * Implementation of the DroneState GRPC Service in protobuf file Drones.proto
-   * @param in The protobuf message for requesting drone state
-   * @return A future encapsulating a DroneStateResponse message
+   * https://doc.akka.io/docs/akka/current/stream/futures-interop.html#overview
+   * @param in A Source stream of DroneStateRequests
+   * @return A Stream of encapsulating DroneStateResponse messages
    */
-  override def droneState(in: DroneStateRequest): Future[DroneStateResponse] = {
-    shardRegion
-      .ask[Drone.DroneState](replyTo => Drone.GetDroneState(in.id, replyTo))
-      .map(droneState => DroneStateResponse(in.id, health = droneState.health, battery = droneState.battery))
+  override def getDroneState(in: Source[DroneStateRequest, NotUsed]): Source[DroneState, NotUsed] = {
+    // mapAsync's Parallelism = The number of Futures that shall run in parallel
+    in.mapAsync(4)(request =>
+      shardRegion
+        .ask[Drone.DroneState](replyTo => Drone.GetDroneState(request.id, replyTo))
+        .map(droneState => DroneState(health = droneState.health, battery = droneState.battery))
+    )
+  }
+
+  /**
+   * Implementation of the DroneState GRPC Service in protobuf file Drones.proto
+   * https://doc.akka.io/docs/akka/current/stream/futures-interop.html#overview
+   * @param in A Source stream of DroneLocationRequests
+   * @return A Stream of encapsulated DroneStateResponse messages
+   */
+  override def getDroneLocation(in: Source[DroneLocationRequest, NotUsed]): Source[DroneLocation, NotUsed] = {
+    // mapAsync's Parallelism = The number of Futures that shall run in parallel
+    in.mapAsync(4)(request =>
+      shardRegion
+        .ask[Drone.DroneLocation](replyTo => Drone.GetDroneLocation(request.id, replyTo))
+        .map(droneLocation => DroneLocation(lat = droneLocation.lat, lon = droneLocation.lon))
+    )
   }
 }

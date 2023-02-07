@@ -16,24 +16,41 @@ trait HgStorage {
   val dbPath: String
 
   /**
-   * Create a new randomly generated persistent handle as the key and
+   * Create a new link connecting all the given atoms in <code>atomHandles</code>.
+   * Generate a new random <code>HgHandle</code> as the key and
    * store the given handles as its value. This links the given
-   * <code>HgHandle</code> atoms together.
+   * array of atoms defined by <code>atomHandles</code> together.
    *
-   * @param handles A non-null but potentially empty array of handles that will be linked together
-   * @return The newly generated handle that points to the list of given handles
+   * @param atomHandles A non-null but potentially empty array of atoms that will be linked together
+   * @return The newly generated link as a <code>HgHandle</code> that links the given atoms
    */
-  def link(handles: Array[HgHandle]): HgHandle
+  def createLink(atomHandles: Array[HgHandle]): HgHandle
 
   /**
    * Link the given <code>HgHandle</code> atoms under the atom defined by the
    * handle parameter. The handle parameter will be used as key.
    *
-   * @param handle A unique handle that refers to the link
-   * @param handles A non-null but potentially empty array of HgHandles that will be linked under handle
+   * @param linkId A unique handle identifier that refers to the link
+   * @param atomHandles A non-null but potentially empty array of atoms that will be linked together
    * @return The <code>handle</code> parameter
    */
-  def link(handle: HgHandle, handles: Array[HgHandle]): HgHandle
+  def createLink(linkId: HgHandle, atomHandles: Array[HgHandle]): HgHandle
+
+  /**
+   * Remove a link identified with the given <code>HgHandle</code>
+   *
+   * @param linkId A unique handle identifier that refers to the link
+   * @return True if removed, false otherwise
+   */
+  def removeLink(linkId: HgHandle): Boolean
+
+  /**
+   * Retrieve an existing link by its handle
+   *
+   * @param linkId A unique handle that refers to the link
+   * @return An array of <code>HgHandle</code> that make up the link
+   */
+  def getLink(linkId: HgHandle): Array[HgHandle]
 
   /**
    * Write raw binary data to the underlying storage. A randomly generated handle will
@@ -54,28 +71,12 @@ trait HgStorage {
   def store(handle: HgHandle, data: Array[Byte]): HgHandle
 
   /**
-   * Remove a link value associated with the given <code>HgHandle</code> key
-   *
-   * @param handle A unique handle that refers to the link
-   * @return True if removed, false otherwise
-   */
-  def removeLink(handle: HgHandle): Boolean
-
-  /**
    * Remove a raw data value associated with the given <code>HgHandle</code> key
    *
    * @param handle A unique handle that will be used as the key to the data
    * @return True if removed, false otherwise
    */
   def removeData(handle: HgHandle): Boolean
-
-  /**
-   * Retrieve an existing link by its handle
-   *
-   * @param handle A unique handle that refers to the link
-   * @return An array of <code>HgHandle</code> that make up the link
-   */
-  def getLink(handle: HgHandle): Array[HgHandle]
 
   /**
    * Retrieve the raw data in bytes given the <code>HgHandle</code> as key
@@ -102,7 +103,9 @@ trait HgStorage {
   def containsData(handle: HgHandle): Boolean
 
   /**
-   * Get an iterable list of other atom handles in the given atom's incidence set
+   * Get an iterable list of other atom handles in the given atom's incidence set.
+   * An incidence set is a collection of any and all other atoms that point
+   * to a particular/given atom
    *
    * @param handle A unique handle to the atom we want to get incidence set of
    * @return An iterable object over other <code>HgHandle</code>s

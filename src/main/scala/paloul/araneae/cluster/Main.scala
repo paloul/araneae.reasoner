@@ -2,7 +2,7 @@ package paloul.araneae.cluster
 
 import paloul.araneae.cluster.util.Settings
 
-object Main extends MainSettingsSupport with MainSupportDrones {
+object Main extends MainSupportSettings with MainSupportInit {
 
   /**
    * Main Entry point of the application
@@ -16,7 +16,7 @@ object Main extends MainSettingsSupport with MainSupportDrones {
     val s: Settings = settings()
 
     // Pass the dynamic settings over to init methods
-    initDrones(s)
+    initialize(s)
 
   }
 }

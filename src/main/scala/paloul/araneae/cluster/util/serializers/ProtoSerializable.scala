@@ -1,10 +1,8 @@
 package paloul.araneae.cluster.util.serializers
 
 /**
- * Marker trait for serialization with Jackson JSON.
- * Ordinary text-based JSON Serialization
- * https://doc.akka.io/docs/akka/current/serialization-jackson.html
+ * Marker trait for serialization with Protobuf.
+ * https://doc.akka.io/docs/akka/current/serialization.html
  *
- * Use for internal messages. External message via gRPC/Kafka use protobuf
  */
-trait ProtoSerializable
+trait ProtoSerializable extends akka.actor.NoSerializationVerificationNeeded

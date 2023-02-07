@@ -19,22 +19,22 @@ scalacOptions ++= Seq(
   "-Xfatal-warnings",  // New lines for each options
   "-deprecation",
   "-unchecked",
+  "-Ymacro-annotations",
   "-language:implicitConversions",
   "-language:higherKinds",
   "-language:existentials",
   "-language:postfixOps"
 )
 
+// Enable Plugins
+enablePlugins(DockerPlugin)
 enablePlugins(AkkaGrpcPlugin)
+enablePlugins(JavaAppPackaging)
 
 libraryDependencies ++= {
   val AkkaVersion = "2.6.19"
   val AkkaHttpVersion = "10.2.9"
-  val AkkaStreamKafkaVersion = "3.0.0" // https://doc.akka.io/docs/alpakka-kafka/current/home.html
   val AkkaManagementVersion = "1.1.3"
-  val AkkaPersistenceCassandraVersion = "1.0.5"
-  val AlpakkaCassandraVersion = "3.0.4"
-  val JacksonVersionVersion = "2.13.3"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -43,25 +43,10 @@ libraryDependencies ++= {
     "com.typesafe.akka"             %% "akka-cluster-typed"                     % AkkaVersion,
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed"            % AkkaVersion,
 
-    "com.typesafe.akka"             %% "akka-persistence"                       % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-typed"                 % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-query"                 % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-persistence-cassandra"             % AkkaPersistenceCassandraVersion,
-
-    "com.typesafe.akka"             %% "akka-stream"                            % AkkaVersion,
-    "com.typesafe.akka"             %% "akka-stream-kafka"                      % AkkaStreamKafkaVersion,
-    "com.typesafe.akka"             %% "akka-stream-kafka-cluster-sharding"     % AkkaStreamKafkaVersion,
-
     "com.typesafe.akka"             %% "akka-http"                              % AkkaHttpVersion,
     "com.typesafe.akka"             %% "akka-http-spray-json"                   % AkkaHttpVersion,
 
     "com.typesafe.akka"             %% "akka-cluster-tools"                     % AkkaVersion,
-
-    // Alpakka libraries
-    // https://doc.akka.io/docs/alpakka/current/cassandra.html
-    "com.lightbend.akka"            %% "akka-stream-alpakka-cassandra"          % AlpakkaCassandraVersion,
-    // Jackson databind required for Kafka Connector
-    "com.fasterxml.jackson.core"    % "jackson-databind"                        % JacksonVersionVersion,
 
     // Discovery for cloud deployment auto discovery capabilities
     // https://doc.akka.io/docs/akka-management/current/discovery/index.html
@@ -73,28 +58,29 @@ libraryDependencies ++= {
     // Logging support, using logback
     // https://logback.qos.ch/manual/configuration.html
     "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
-    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.1.1",
+    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.2",
 
     // Apache Lucene
     // https://lucene.apache.org/
     // https://search.maven.org/artifact/org.apache.lucene/lucene-core
-    "org.apache.lucene"             % "lucene-core"                             % "9.1.0"
+    "org.apache.lucene"             % "lucene-core"                             % "9.3.0",
+
+    // MapDB
+    // https://mapdb.org/
+    // https://github.com/jankotek/mapdb/
+    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
 
   )
 }
 
-// Enable the Docker Plugin and define settings
-enablePlugins(DockerPlugin)
+// Define Docker Plugin settings
 Docker / packageName := name.value
 Docker / version := version.value
-dockerBaseImage := "openjdk:11-jre-slim-bullseye"
+dockerBaseImage := "eclipse-temurin:17.0.4_8-jre-alpine"
 dockerExposedPorts := Seq(5000, 2550, 8558)
-
-// Add custom Docker Cmds to the Dockerfile
-dockerCommands ++= Seq(
+dockerCommands ++= Seq( // Add custom Docker commands to the Dockerfile
   Cmd("USER", "root"), // Switch to root to allow apt-get upgrade command
-  ExecCmd("RUN", "apt-get", "update"),
-  ExecCmd("RUN", "apt-get", "upgrade", "-y"),
-  ExecCmd("RUN", "apt-get", "dist-upgrade", "-y"),
+  ExecCmd("RUN", "apk", "update"),
+  ExecCmd("RUN", "apk", "upgrade", "--latest"),
   Cmd("USER", (Docker / daemonUser).value) // Switch back to default user from root
 )
