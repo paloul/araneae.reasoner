@@ -80,5 +80,6 @@ fabric.properties
 
 # SBT/Scala build folders
 target/
+project/.bloop/
 project/project/
 project/target/
