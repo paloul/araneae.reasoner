@@ -20,7 +20,7 @@ trait MainSupportSettings {
    * @param configStr Initial String Config representation that will be concatenated with dynamic updates
    * @return String containing config updates for Akka Remote & Management Hostnames and cleared Seed Nodes
    */
-  def runtimeCloudDeployMods(cloudDeploy: Boolean, configStr: String = ""): String = {
+  private def runtimeCloudDeployMods(cloudDeploy: Boolean, configStr: String = ""): String = {
     // If we are deploying to cloud then assign the canonical host name to the
     // current IP address grabbed from the underlying OS support libs.
     // When deploying to cloud and enabling cluster management and cluster bootstrap,
