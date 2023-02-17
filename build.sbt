@@ -8,7 +8,14 @@ scalaVersion := "2.13.8"
 
 exportJars := true
 
+Global / fork := true
+
+Global / connectInput := true
+
 Global / cancelable := false
+
+// The [info] prefixes cause line wrap to get messed up, disable it
+Global / outputStrategy := Some(StdoutOutput)
 
 Global / excludeLintKeys += lintUnused
 
@@ -32,9 +39,9 @@ enablePlugins(AkkaGrpcPlugin)
 enablePlugins(JavaAppPackaging)
 
 libraryDependencies ++= {
-  val AkkaVersion = "2.6.19"
-  val AkkaHttpVersion = "10.2.9"
-  val AkkaManagementVersion = "1.1.3"
+  val AkkaVersion = "2.7.0"
+  val AkkaHttpVersion = "10.4.0"
+  val AkkaManagementVersion = "1.2.0"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -55,21 +62,22 @@ libraryDependencies ++= {
     "com.lightbend.akka.discovery"  %% "akka-discovery-kubernetes-api"          % AkkaManagementVersion,
     "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap"      % AkkaManagementVersion,
 
-    // Logging support, using logback
+    // Logging support, logback is an option, using scribe instead with slf4j plugin
     // https://logback.qos.ch/manual/configuration.html
-    "ch.qos.logback"                % "logback-classic"                         % "1.2.11",
-    "net.logstash.logback"          % "logstash-logback-encoder"                % "7.2",
+    // https://github.com/outr/scribe
+    //"ch.qos.logback"                % "logback-classic"                         % "1.2.11",
+    //"net.logstash.logback"          % "logstash-logback-encoder"                % "7.2",
+    "com.outr"                      %% "scribe-slf4j"                           % "3.11.0",
 
     // Apache Lucene
     // https://lucene.apache.org/
     // https://search.maven.org/artifact/org.apache.lucene/lucene-core
-    "org.apache.lucene"             % "lucene-core"                             % "9.3.0",
+    "org.apache.lucene"             % "lucene-core"                             % "9.5.0",
 
     // MapDB
     // https://mapdb.org/
     // https://github.com/jankotek/mapdb/
-    "org.mapdb"                     % "mapdb"                                   % "3.0.8"
-
+    "org.mapdb"                     % "mapdb"                                   % "3.0.9"
   )
 }
 
