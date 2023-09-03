@@ -21,6 +21,9 @@ Global / excludeLintKeys += lintUnused
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+// If set to false, sbt-assembly will parallelize JAR creation for faster performance
+ThisBuild / assemblyRepeatableBuild := false
+
 scalacOptions ++= Seq(
   "-encoding", "utf8", // Option and arguments on same line
   "-Xfatal-warnings",  // New lines for each options
@@ -39,9 +42,9 @@ enablePlugins(AkkaGrpcPlugin)
 enablePlugins(JavaAppPackaging)
 
 libraryDependencies ++= {
-  val AkkaVersion = "2.7.0"
-  val AkkaHttpVersion = "10.4.0"
-  val AkkaManagementVersion = "1.2.0"
+  val AkkaVersion = "2.8.2"
+  val AkkaHttpVersion = "10.5.2"
+  val AkkaManagementVersion = "1.4.1"
 
   Seq(
     "com.typesafe.akka"             %% "akka-actor"                             % AkkaVersion,
@@ -67,17 +70,7 @@ libraryDependencies ++= {
     // https://github.com/outr/scribe
     //"ch.qos.logback"                % "logback-classic"                         % "1.2.11",
     //"net.logstash.logback"          % "logstash-logback-encoder"                % "7.2",
-    "com.outr"                      %% "scribe-slf4j"                           % "3.11.0",
-
-    // Apache Lucene
-    // https://lucene.apache.org/
-    // https://search.maven.org/artifact/org.apache.lucene/lucene-core
-    "org.apache.lucene"             % "lucene-core"                             % "9.5.0",
-
-    // MapDB
-    // https://mapdb.org/
-    // https://github.com/jankotek/mapdb/
-    "org.mapdb"                     % "mapdb"                                   % "3.0.9"
+    "com.outr"                      %% "scribe-slf4j"                           % "3.11.9"
   )
 }
 

@@ -2,7 +2,7 @@ package paloul.araneae.cluster.actors
 
 import akka.Done
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior, PostStop}
 import akka.cluster.sharding.typed.ShardingMessageExtractor
 import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
 import paloul.araneae.cluster.util.Settings
@@ -83,6 +83,7 @@ object Drone {
     Future {
       ClusterSharding(system).init(
         Entity(TypeKey)(createBehavior = entityContext => Drone(entityContext.entityId))
+          .withStopMessage(Stop())
           .withMessageExtractor(noEnvelopeMessageExtractor)
       )
     }
@@ -105,18 +106,29 @@ class Drone private (id: String,
   import Drone._
 
   private def inactive(droneState: DroneState, droneLocation: DroneLocation): Behavior[Command] =
-    Behaviors.receiveMessage {
-      case GetDroneState(droneId, replyTo) =>
-        context.log.info("Requested state for Drone[{}]", droneId)
-        replyTo ! droneState
-        Behaviors.same
-      case GetDroneLocation(droneId, replyTo) =>
-        context.log.info("Requested location for Drone[{}]", droneId)
-        replyTo ! droneLocation
-        Behaviors.same
-      case _ =>
-        context.log.info("Drone[{}] received a message", id)
+    Behaviors.receive[Command] { (context, message) =>
+      message match {
+        case GetDroneState(droneId, replyTo) =>
+          context.log.info("Requested state for Drone[{}]", droneId)
+          replyTo ! droneState
+          Behaviors.same
+        case GetDroneLocation(droneId, replyTo) =>
+          context.log.info("Requested location for Drone[{}]", droneId)
+          replyTo ! droneLocation
+          Behaviors.same
+        case Stop(_) =>
+          context.log.info("Drone[{}] received a Stop message. Stopping...", id)
+          Behaviors.stopped
+        case _ =>
+          context.log.info("Drone[{}] received a message", id)
+          // Clean up resources, tell children if any to stop as well
+          Behaviors.same
+      }
+    }
+    .receiveSignal {
+      case (context, PostStop) =>
+        context.log.info("Drone[{}] Stopped", id)
+        // Any last second resource clean up should go here
         Behaviors.same
     }
-
 }

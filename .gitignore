@@ -6,6 +6,12 @@
 
 .bsp/
 
+.bloop/
+
+.metals/
+
+.vscode/
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -83,3 +89,4 @@ target/
 project/.bloop/
 project/project/
 project/target/
+project/metals.sbt
