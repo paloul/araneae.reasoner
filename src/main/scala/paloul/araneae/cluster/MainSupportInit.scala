@@ -8,9 +8,9 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
 import org.slf4j.{Logger, LoggerFactory}
-import paloul.araneae.cluster.actors.Drone
-import paloul.araneae.cluster.protobuf.DroneServiceHandler
-import paloul.araneae.cluster.services.grpc.DroneGrpcService
+import paloul.araneae.cluster.actors.Agent
+import paloul.araneae.cluster.protobuf.AgentServiceHandler
+import paloul.araneae.cluster.services.grpc.AgentGrpcService
 import paloul.araneae.cluster.util.Settings
 
 import scala.concurrent.Future
@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 // Root Level Custom Messages
 sealed trait Command
 case object NodeMemberUp extends Command
-final case class ShardingStarted(region: ActorRef[Drone.Command]) extends Command
+final case class ShardingStarted(region: ActorRef[Agent.Command]) extends Command
 final case class BindingFailed(reason: Throwable) extends Command
 //************************************************************************************
 
@@ -49,7 +49,7 @@ trait MainSupportInit {
         val upAdapter = context.messageAdapter[SelfUp](_ => NodeMemberUp)
         cluster.subscriptions ! Subscribe(upAdapter, classOf[SelfUp])
 
-        context.pipeToSelf(Drone.shardingInit(context.system, settings)) {
+        context.pipeToSelf(Agent.shardingInit(context.system, settings)) {
           case Success(region) => ShardingStarted(region)
           case Failure(ex) => throw ex
         }
@@ -70,7 +70,7 @@ trait MainSupportInit {
    * @return
    */
   private def starting(context: ActorContext[Command],
-                       sharding: Option[ActorRef[Drone.Command]],
+                       sharding: Option[ActorRef[Agent.Command]],
                        joinedCluster: Boolean,
                        settings: Settings
                       ): Behavior[Command] = Behaviors.receive[Command] {
@@ -101,7 +101,7 @@ trait MainSupportInit {
    * @return After initiate start state, returns the running behavior
    */
   private def start(context: ActorContext[Command],
-                    region: ActorRef[Drone.Command],
+                    region: ActorRef[Agent.Command],
                     settings: Settings
                    ): Behavior[Command] = {
 
@@ -165,12 +165,12 @@ trait MainSupportInit {
    * @return A Future of type ServerBinding, which will determine if service successfully bound
    */
   private def startGrpc(system: ActorSystem[_],
-                        region: ActorRef[Drone.Command],
+                        region: ActorRef[Agent.Command],
                         settings: Settings): Future[Http.ServerBinding] = {
 
     // Create service handlers
     val service: HttpRequest => Future[HttpResponse] =
-      DroneServiceHandler(new DroneGrpcService(system, region, settings))(system.classicSystem)
+      AgentServiceHandler(new AgentGrpcService(system, region, settings))(system.classicSystem)
 
     // Bind service handler servers and return the binding itself as a future
     Http()(system.classicSystem).newServerAt(

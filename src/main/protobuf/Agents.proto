@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "paloul.araneae.cluster.protobuf";
+option java_outer_classname = "AgentsProto";
+
+service AgentService {
+  rpc  GetAgentState (stream AgentStateRequest) returns (stream AgentState) {}
+  rpc  GetAgentLocation (stream AgentLocationRequest) returns (stream AgentLocation) {}
+}
+
+message AgentState {
+  int32 health = 1;
+  int32 battery = 2;
+}
+
+message AgentLocation {
+  int32 lat = 1;
+  int32 lon = 2;
+}
+
+message AgentStateRequest {
+  string id = 1;
+}
+
+message AgentLocationRequest {
+  string id = 1;
+}
