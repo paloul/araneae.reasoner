@@ -1,1 +1,0 @@
-## Araneae Hypergraph Implementation
