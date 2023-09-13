@@ -22,7 +22,7 @@ Global / excludeLintKeys += lintUnused
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // If set to false, sbt-assembly will parallelize JAR creation for faster performance
-ThisBuild / assemblyRepeatableBuild := false
+Global / assemblyRepeatableBuild := false
 
 scalacOptions ++= Seq(
   "-encoding", "utf8", // Option and arguments on same line
